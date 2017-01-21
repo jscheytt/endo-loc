@@ -1,0 +1,4 @@
+matplotlib
+pytest
+lxml
+cv2
