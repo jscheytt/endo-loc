@@ -3,7 +3,6 @@ from lxml import etree
 
 import feature_extraction.feature_descriptor as fd
 import feature_extraction.helper as hlp
-import tests.conftest as cft
 
 # Constants
 CHARSET = "utf-8"
@@ -88,10 +87,9 @@ class FeatureExtractor:
         return video_el
 
     @classmethod
-    def write_video_to_xml(cls, video_xml):
+    def write_video_to_xml(cls, video_xml, target_filename):
         tree = etree.ElementTree(video_xml)
-        # TODO NOW define target filename!
-        tree.write(cft.test_video_xml_filename, encoding=CHARSET, pretty_print=True)
+        tree.write(target_filename, encoding=CHARSET, pretty_print=True)
 
     @classmethod
     def get_video_from_xml(cls, filename):
