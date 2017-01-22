@@ -61,7 +61,9 @@ def test_get_frame_number():
 
 def test_write_video_xml():
     video_xml = fx.FeatureExtractor.get_videofile_as_xml(cft.example_vid)
+    assert len(video_xml)
     fx.FeatureExtractor.write_video_to_xml(video_xml, cft.test_video_xml_filename)
+    assert hlp.file_length(cft.test_video_xml_filename)
 
 
 def test_read_video_frames():

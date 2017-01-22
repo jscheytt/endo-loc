@@ -56,3 +56,11 @@ def flatten_int(l):
 
 def get_timestamp_from_time(hours, minutes, seconds, milliseconds):
     return "%02d:%02d:%02d.%02d" % (hours, minutes, seconds, milliseconds)
+
+
+def file_length(filename):
+    import os
+
+    f = open(filename)
+    size = int(os.fstat(f.fileno()).st_size)
+    return size
