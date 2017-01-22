@@ -67,3 +67,10 @@ def test_write_video_xml():
 def test_read_video_frames():
     video = fx.FeatureExtractor.get_video_from_xml(cft.test_video_xml_filename)
     assert len(video.frames)
+
+
+def test_get_img_numpx(test_image):
+    img_width = 640
+    img_height = 360
+    img_numpx = img_width * img_height
+    assert img_numpx == fx.FeatureExtractor.get_img_numpx(test_image)

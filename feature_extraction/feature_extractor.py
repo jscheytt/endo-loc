@@ -108,3 +108,8 @@ class FeatureExtractor:
         video = fd.Video(fps=video_el.get(FPS_TAG), frames=frames)
 
         return video
+
+    @classmethod
+    def get_img_numpx(cls, img):
+        height, width = tuple(img.shape[1::-1])
+        return height * width
