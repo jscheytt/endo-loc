@@ -13,6 +13,7 @@ TIMESTAMP_TAG = "timestamp"
 FTDESCR_TAG = "ftdescr"
 HIST_TAG = "hist"
 FPS_TAG = "fps"
+NUMPX_TAG = "numpx"
 VAL_SEP = ';'
 
 
@@ -42,6 +43,7 @@ class FeatureExtractor:
     @classmethod
     def get_vframe_as_xml(cls, frame):
         frame_el = etree.Element(VFRAME_TAG)
+        # TODO timestamp already is str
         frame_el.set(TIMESTAMP_TAG, str(frame.timestamp))
         # frame_el.set("timestamp", str(frame.timestamp))
         descriptor_el = cls.get_descriptor_as_xml(frame.descriptor)
@@ -52,6 +54,7 @@ class FeatureExtractor:
     def get_videofile_as_xml(cls, filename):
         cap = cv2.VideoCapture(filename)
         fps = int(cap.get(cv2.CAP_PROP_FPS))
+        numpx = 0
         curr_frameidx = 0
 
         video_el = etree.Element(VIDEO_TAG)
@@ -63,6 +66,10 @@ class FeatureExtractor:
             _, frame_img = cap.read()
 
             if frame_img is not None:
+                # Initialize numpx
+                if numpx == 0:
+                    numpx = cls.get_img_numpx(frame_img)
+
                 curr_timestamp = hlp.get_timestamp(curr_frameidx, fps)
                 vframe = fd.VFrame(curr_timestamp, fd.FeatureDescriptor(frame_img))
                 # video.add_frame(vframe)
@@ -75,14 +82,15 @@ class FeatureExtractor:
                 # End of file reached
                 break
 
+        video_el.set(NUMPX_TAG, str(numpx))
         cap.release()
-        cv2.destroyAllWindows()
 
         return video_el
 
     @classmethod
     def write_video_to_xml(cls, video_xml):
         tree = etree.ElementTree(video_xml)
+        # TODO NOW define target filename!
         tree.write(cft.test_video_xml_filename, encoding=CHARSET, pretty_print=True)
 
     @classmethod
@@ -105,7 +113,7 @@ class FeatureExtractor:
             vframe = fd.VFrame(timestamp=timestamp, descriptor=descriptor)
             frames.append(vframe)
 
-        video = fd.Video(fps=video_el.get(FPS_TAG), frames=frames)
+        video = fd.Video(fps=video_el.get(FPS_TAG), frames=frames, numpx=video_el.get(NUMPX_TAG))
 
         return video
 

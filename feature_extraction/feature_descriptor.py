@@ -1,4 +1,5 @@
 DEF_FPS = 25  # default framerate
+DEF_NUMPX = 1920*1080
 
 
 class FeatureDescriptor:
@@ -17,7 +18,7 @@ class VFrame:
 
 
 class Video:
-    def __init__(self, fps=DEF_FPS, frames=None, labels=None):
+    def __init__(self, fps=DEF_FPS, frames=None, labels=None, numpx=DEF_NUMPX):
         if labels is None:
             labels = []
         if frames is None:
@@ -25,6 +26,7 @@ class Video:
         self.fps = fps
         self.frames = frames
         self.labels = labels
+        self.numpx = numpx
 
     def add_frame(self, frame):
         self.frames.append(frame)
