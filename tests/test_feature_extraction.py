@@ -1,7 +1,6 @@
 from .context import sample
 
 import pytest
-from lxml import etree
 
 import feature_extraction.feature_descriptor as fd
 import feature_extraction.feature_extractor as fx
@@ -25,6 +24,7 @@ def test_get_histograms_hsv(test_hists):
 def test_get_descriptor_as_xml(test_hists):
     descriptor = fd.FeatureDescriptor(test_hists)
     xml = fx.FeatureExtractor.get_descriptor_as_xml(descriptor)
+    from lxml import etree
     assert len(xml) and isinstance(xml, etree._Element)
 
 
