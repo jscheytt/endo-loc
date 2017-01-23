@@ -15,6 +15,22 @@ def get_textfile_as_str(ilabel_file):
     return contents
 
 
+def reduce_label_value(label_value):
+    """
+    For binary classification, reduce the 7 labels to only 2.
+    :param label_value: ILabelValue obj
+    :return: ILabelValue obj of IN or OUT only
+    """
+    switcher = {
+        lb.ILabelValue.ADS: None,
+        lb.ILabelValue.MOVING_IN: lb.ILabelValue.IN,
+        lb.ILabelValue.MOVING_OUT: lb.ILabelValue.IN,
+        lb.ILabelValue.IN_BETWEEN: lb.ILabelValue.IN,
+        lb.ILabelValue.EXIT: lb.ILabelValue.IN,
+    }
+    return switcher.get(label_value, label_value)
+
+
 def get_label_from_line(line):
     """
     Match pattern against line and get ILabel obj from it.
@@ -31,7 +47,8 @@ def get_label_from_line(line):
         label_name = matcher.group(3)
         label_idx = [l.name for l in lb.ILabelValue].index(label_name)
         label_value = [l for l in lb.ILabelValue][label_idx]
-        ilabel = lb.ILabel(start, end, label_value)
+        redu_label_val = reduce_label_value(label_value)
+        ilabel = lb.ILabel(start, end, redu_label_val)
 
     return ilabel
 

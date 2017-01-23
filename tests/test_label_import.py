@@ -38,9 +38,9 @@ def test_comp_timestamps():
 
 def test_get_label_from_timestamp():
     t1 = lt.Timestamp.from_str("0:00:00.00")
-    t2 = lt.Timestamp.from_str("0:34:25.20")
+    t2 = lt.Timestamp.from_str("0:01:19.76")
     val1 = lb.ILabelValue.OUT
-    val2 = lb.ILabelValue.MOVING_IN
+    val2 = lb.ILabelValue.IN
     labels = li.get_labels_from_file(cft.test_ilabel)
     video = fd.Video(labels=labels)
     assert val1 == video.get_label_from_timestamp(t1).value
@@ -61,3 +61,13 @@ def test_get_frame_number():
     fps = 25
     timestamp_obj = lt.Timestamp.from_str(timestamp_str)
     assert frame_number == timestamp_obj.get_frameidx(fps)
+
+
+def test_reduce_label_value():
+    for l in lb.ILabelValue:
+        red_l = li.reduce_label_value(l)
+        assert red_l is not lb.ILabelValue.MOVING_IN
+        assert red_l is not lb.ILabelValue.MOVING_OUT
+        assert red_l is not lb.ILabelValue.IN_BETWEEN
+        assert red_l is not lb.ILabelValue.EXIT
+        assert red_l is not lb.ILabelValue.ADS
