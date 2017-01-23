@@ -1,5 +1,3 @@
-from .context import sample
-
 import pytest
 
 import feature_extraction.ft_descriptor as fd
@@ -42,22 +40,6 @@ def test_get_frame_as_xml(test_hists):
 def test_get_video_as_xml():
     video_xml = fx.get_videofile_as_xml(cft.example_vid)
     assert len(video_xml)
-
-
-def test_get_timestamp():
-    frame_number = 62424
-    timestamp_str = "00:41:36.96"
-    fps = 25
-    timestamp_obj = lt.Timestamp.from_frameidx_fps(frame_number, fps)
-    assert timestamp_str == timestamp_obj.to_str()
-
-
-def test_get_frame_number():
-    frame_number = 62424
-    timestamp_str = "00:41:36.96"
-    fps = 25
-    timestamp_obj = lt.Timestamp.from_str(timestamp_str)
-    assert frame_number == timestamp_obj.get_frameidx(fps)
 
 
 def test_write_video_xml():

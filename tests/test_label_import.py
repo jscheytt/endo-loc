@@ -45,3 +45,19 @@ def test_get_label_from_timestamp():
     video = fd.Video(labels=labels)
     assert val1 == video.get_label_from_timestamp(t1).value
     assert val2 == video.get_label_from_timestamp(t2).value
+
+
+def test_get_timestamp():
+    frame_number = 62424
+    timestamp_str = "00:41:36.96"
+    fps = 25
+    timestamp_obj = lt.Timestamp.from_frameidx_fps(frame_number, fps)
+    assert timestamp_str == timestamp_obj.to_str()
+
+
+def test_get_frame_number():
+    frame_number = 62424
+    timestamp_str = "00:41:36.96"
+    fps = 25
+    timestamp_obj = lt.Timestamp.from_str(timestamp_str)
+    assert frame_number == timestamp_obj.get_frameidx(fps)
