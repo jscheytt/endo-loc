@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from sample.debug import Debug
+import feature_extraction.ft_extractor as fx
 
 res_dir = "res" + os.sep
 
@@ -14,4 +14,4 @@ test_ilabel = res_dir + "test_ilabel.ass"
 
 @pytest.fixture(scope="module")
 def test_image():
-    return Debug.load_image(example_img)
+    return fx.load_image(example_img)

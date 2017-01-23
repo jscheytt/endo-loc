@@ -1,31 +1,24 @@
 import cv2
 from matplotlib import pyplot as plt
 
-import feature_extraction as fx
+import feature_extraction.ft_extractor as fx
+
+IMG_TITLE = "image"
 
 
 class Debug:
-    image_title = "image"
-    hists_title = "histograms"
-
-    @classmethod
-    def load_image(cls, filepath):
-        """Load color image."""
-        img = cv2.imread(filepath, cv2.IMREAD_COLOR)
-        return img
-
     @classmethod
     def display_image(cls, image):
         """Display image in a new window. Window closes after pressing any key."""
-        cv2.imshow(Debug.image_title, image)
+        cv2.imshow(IMG_TITLE, image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
     @classmethod
     def get_histograms_rgb(cls, image):
         """
-        Retrieve histograms of an image.
-        :param image:
+        Retrieve RGB histograms of an image.
+        :param image: OpenCV image object
         :return: List of histograms in order red, green, blue.
         """
         hist_blue = cv2.calcHist([image], [0], None, [256], [0, 256])
@@ -35,6 +28,12 @@ class Debug:
 
     @classmethod
     def plot_histograms(cls, hists, update_interval=0.0):
+        """
+        Plot histogram in new window in Red, Green and Blue.
+        :param hists: List of 3 histogram channels
+        :param update_interval: Time in seconds at which the window should be updated
+        :return:
+        """
         color = ('r', 'g', 'b')
         for idx, col in enumerate(color):
             plt.plot(hists[idx], color=col)
@@ -44,6 +43,11 @@ class Debug:
 
     @classmethod
     def plot_histograms_live(cls, filename):
+        """
+        Plot histogram of a video frame by frame. Is not expected to work in real time.
+        :param filename: Path to video file
+        :return:
+        """
         cap = cv2.VideoCapture(filename)
 
         while cap.isOpened():
