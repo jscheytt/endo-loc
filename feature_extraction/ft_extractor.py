@@ -76,6 +76,7 @@ def get_videofile_as_xml(filename):
         _, frame_img = cap.read()
 
         if frame_img is not None:
+            # TODO reject frames with reduced label None
             # Initialize numpx
             if numpx == 0:
                 numpx = get_img_numpx(frame_img)
