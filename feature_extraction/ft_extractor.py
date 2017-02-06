@@ -1,4 +1,5 @@
 import cv2
+import logging
 from lxml import etree
 
 import feature_extraction.ft_descriptor as fd
@@ -87,6 +88,11 @@ def get_videofile_as_xml(filename):
 
             vframe_el = get_vframe_as_xml(vframe)
             video_el.append(vframe_el)
+
+            # Log timestamp for every second
+            if curr_frameidx % fps == 0:
+                logging.info(curr_timestamp)
+                pass
 
             curr_frameidx += 1
         else:
