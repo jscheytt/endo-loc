@@ -38,12 +38,12 @@ def test_get_frame_as_xml(test_hists):
 
 @pytest.mark.skip(reason="Already contained in test_write_video_xml")
 def test_get_video_as_xml():
-    video_xml = fx.get_videofile_as_xml(cft.example_vid)
+    video_xml = fx.get_xml_from_videofile(cft.example_vid)
     assert len(video_xml)
 
 
 def test_write_video_xml():
-    video_xml = fx.get_videofile_as_xml(cft.example_vid)
+    video_xml = fx.get_xml_from_videofile(cft.example_vid)
     assert len(video_xml)
     fx.write_video_to_xml(video_xml, cft.test_video_xml_filename)
     assert hlp.file_length(cft.test_video_xml_filename)

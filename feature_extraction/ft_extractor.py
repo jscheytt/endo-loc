@@ -57,7 +57,7 @@ def get_vframe_as_xml(frame):
     return frame_el
 
 
-def get_videofile_as_xml(filename):
+def get_xml_from_videofile(filename):
     """
     Read in a video file and build an XML element from it.
     :param filename: Path to video file
@@ -91,8 +91,7 @@ def get_videofile_as_xml(filename):
 
             # Log timestamp for every second
             if curr_frameidx % fps == 0:
-                logging.info(curr_timestamp)
-                pass
+                logging.info(curr_timestamp.to_str())
 
             curr_frameidx += 1
         else:

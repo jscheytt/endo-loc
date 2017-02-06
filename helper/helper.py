@@ -49,3 +49,7 @@ def xml_elements_equal(e1, e2):
     if len(e1) != len(e2):
         return False
     return all(xml_elements_equal(c1, c2) for c1, c2 in zip(e1, e2))
+
+
+def strip_file_extension(filename):
+    return filename.rsplit('.', 1)[0]
