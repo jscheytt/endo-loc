@@ -64,7 +64,7 @@ def get_xml_from_videofile(filename):
     :return: XML element of the video file
     """
     cap = cv2.VideoCapture(filename)
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    fps = round(cap.get(cv2.CAP_PROP_FPS))
     numpx = 0
     curr_frameidx = 0
 
