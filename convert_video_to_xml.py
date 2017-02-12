@@ -22,9 +22,6 @@ def main(videofile):
     target_filename = get_default_target_filename(videofile)
     fx.write_video_to_xml(videoxml, target_filename=target_filename)
 
-    if hlp.file_length(target_filename):
-        logging.warning("Target XML file is empty!")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Convert a video file to an XML containing the HSV histograms of "
