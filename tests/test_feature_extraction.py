@@ -49,6 +49,10 @@ def test_write_video_xml():
     assert hlp.file_length(cft.test_video_xml_filename)
 
 
+def test_file_length():
+    assert hlp.file_length(cft.example_img)
+
+
 def test_read_video_frames():
     video = fx.get_video_from_xml(cft.test_video_xml_filename)
     assert len(video.frames)
