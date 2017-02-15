@@ -1,3 +1,5 @@
+from .context import sample
+
 import pytest
 
 import feature_extraction.ft_descriptor as fd
@@ -49,10 +51,6 @@ def test_write_video_xml():
     assert hlp.file_length(cft.test_video_xml_filename)
 
 
-def test_file_length():
-    assert hlp.file_length(cft.example_img)
-
-
 def test_read_video_frames():
     video = fx.get_video_from_xml(cft.test_video_xml_filename)
     assert len(video.frames)
@@ -63,3 +61,12 @@ def test_get_img_numpx(test_image):
     img_height = 360
     img_numpx = img_width * img_height
     assert img_numpx == fx.get_img_numpx(test_image)
+
+
+def test_video_add_frame():
+    video = fd.Video()
+    number_of_frames = len(video.frames)
+    new_frame = fd.VFrame()
+    video.add_frame(new_frame)
+    new_number_of_frames = len(video.frames)
+    assert number_of_frames != new_number_of_frames

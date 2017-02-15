@@ -25,10 +25,8 @@ def file_length(filename):
     :return: Byte length of file
     """
     import os
-
     f = open(filename)
-    size = int(os.fstat(f.fileno()).st_size)
-    return size
+    return int(os.fstat(f.fileno()).st_size)
 
 
 def xml_elements_equal(e1, e2):
