@@ -79,3 +79,9 @@ def test_video_add_frame():
     video.add_frame(new_frame)
     new_number_of_frames = len(video.frames)
     assert number_of_frames != new_number_of_frames
+
+
+def test_get_ft_vec_list():
+    video = fd.Video(xmlpath=cft.training_video_ft)
+    ft_vec_list = video.get_featurevector_list()
+    assert len(ft_vec_list)

@@ -3,6 +3,8 @@ from .context import sample
 import pytest
 
 import preprocessing.preprocessor as pre
+import helper.helper as hlp
+
 import numpy as np
 
 
@@ -23,8 +25,8 @@ def test_get_array(ft_array):
     assert ft_array.flags['C']
 
 
-def test_normalize_list(feature):
+def test_normalize_lists(feature):
     max_val = 10
-    ft_array_norm = pre.normalize_array(feature, max_val)
-    assert 0 <= ft_array_norm.max() <= max_val
-    assert ft_array_norm.min() == 0.0
+    ft_vec_list_norm = pre.normalize_ft_vec_list(feature * 3, max_val)
+    maxval = hlp.maxval_of_2dlist(ft_vec_list_norm)
+    assert 0 <= maxval <= max_val

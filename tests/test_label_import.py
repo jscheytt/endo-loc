@@ -75,6 +75,7 @@ def test_reduce_label_value():
 
 def test_get_label_list():
     labels = li.get_labels_from_file(cft.training_labels)
-    video = fd.Video(cft.training_video, labels=labels)
+    video = fd.Video(xmlpath=cft.training_video_ft, labels=labels)
     label_list = video.get_label_list()
+    assert len(label_list)
     assert len(video.frames) == len(label_list)

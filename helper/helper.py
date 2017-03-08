@@ -51,3 +51,15 @@ def xml_elements_equal(e1, e2):
 
 def strip_file_extension(filename):
     return filename.rsplit('.', 1)[0]
+
+
+def maxval_of_2dlist(ll):
+    """
+    Get maximum value in a list of lists.
+    :param ll: 2D list
+    :return: max value in the 2D list
+    """
+    maxval = 0
+    for l in ll:
+        maxval = max(l)
+    return maxval

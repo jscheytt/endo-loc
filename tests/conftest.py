@@ -11,6 +11,7 @@ example_vid = res_dir + "test_video_1s.mp4"  # alt: "test_video_1s.mp4", "test_v
 test_video_xml_filename = res_dir + "test_video_features.xml"
 test_ilabel = res_dir + "test_ilabel.ass"
 training_video = res_dir + "video_train.mp4"
+training_video_ft = res_dir + "video_train_ft.xml"
 training_labels = res_dir + "video_train.ass"
 
 

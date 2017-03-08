@@ -39,7 +39,7 @@ class Video:
     All frames and corresponding target labels are contained herein.
     """
 
-    def __init__(self, fps=DEF_FPS, frames=None, labels=None, numpx=DEF_NUMPX):
+    def __init__(self, fps=DEF_FPS, frames=None, labels=None, numpx=DEF_NUMPX, xmlpath=""):
         if labels is None:
             labels = []
         if frames is None:
@@ -48,6 +48,10 @@ class Video:
         self.frames = frames
         self.labels = labels
         self.numpx = numpx
+
+        if xmlpath != "":
+            import feature_extraction.ft_extractor as fx
+            self.fps, self.frames, self.numpx = fx.get_video_params_from_xml(xmlpath)
 
     def add_frame(self, frame):
         """
@@ -69,7 +73,20 @@ class Video:
                 return label
 
     def get_label_list(self):
+        """
+        Get all labels as an exhaustive list, i. e. with as many entries as there are frames.
+        :return: 1D list of ILabel objs
+        """
         labels = []
         for frame in self.frames:
-            labels.extend(self.get_label_from_timestamp(frame.timestamp))
+            label_val = self.get_label_from_timestamp(frame.timestamp).value.value
+            labels.append(label_val)
         return labels
+
+    def get_featurevector_list(self):
+        """
+        Get all 1D vectors of the feature descriptors of the frames.
+        :return: list of all feature vectors
+        """
+        vectors = [f.descriptor.get_vector() for f in self.frames]
+        return vectors

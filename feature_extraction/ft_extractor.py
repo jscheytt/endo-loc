@@ -121,11 +121,20 @@ def get_video_from_xml(filename):
     :param filename: Path to video XML file
     :return: Video obj from XML file
     """
+    fps, frames, numpx = get_video_params_from_xml(filename)
+    video = fd.Video(fps=fps, frames=frames, numpx=numpx)
+
+    return video
+
+
+def get_video_params_from_xml(filename):
     parser = etree.XMLParser(encoding=CHARSET)
     tree = etree.parse(filename, parser=parser)
     video_el = tree.getroot()
     frames_els = video_el.getchildren()
     frames = []
+    fps = video_el.get(FPS_TAG)
+    numpx = video_el.get(NUMPX_TAG)
 
     for vframe_el in frames_els:
         descriptor_el = vframe_el[0]
@@ -140,9 +149,7 @@ def get_video_from_xml(filename):
         vframe = fd.VFrame(timestamp=timestamp_obj, descriptor=descriptor)
         frames.append(vframe)
 
-    video = fd.Video(fps=video_el.get(FPS_TAG), frames=frames, numpx=video_el.get(NUMPX_TAG))
-
-    return video
+    return fps, frames, numpx
 
 
 def get_img_numpx(img):
