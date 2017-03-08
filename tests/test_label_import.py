@@ -71,3 +71,10 @@ def test_reduce_label_value():
         assert red_l is not lb.ILabelValue.IN_BETWEEN
         assert red_l is not lb.ILabelValue.EXIT
         assert red_l is not lb.ILabelValue.ADS
+
+
+def test_get_label_list():
+    labels = li.get_labels_from_file(cft.training_labels)
+    video = fd.Video(cft.training_video, labels=labels)
+    label_list = video.get_label_list()
+    assert len(video.frames) == len(label_list)

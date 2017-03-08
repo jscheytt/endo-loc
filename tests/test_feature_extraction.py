@@ -29,6 +29,15 @@ def test_get_descriptor_as_xml(test_hists):
     assert len(xml) and isinstance(xml, etree._Element)
 
 
+def test_get_descriptor_vector(test_hists):
+    descriptor = fd.FeatureDescriptor(test_hists)
+    vector = descriptor.get_vector()
+    total_length = 0
+    for hist in descriptor.hists:
+        total_length += len(hist)
+    assert len(vector) == total_length
+
+
 def test_get_frame_as_xml(test_hists):
     timestamp = lt.Timestamp.from_str("00:41:36.96")
     frame_1 = fd.VFrame(timestamp, fd.FeatureDescriptor(test_hists))

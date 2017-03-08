@@ -14,6 +14,9 @@ class FeatureDescriptor:
             import feature_extraction.ft_extractor as fx
             self.hists = fx.get_histograms_hsv(hists_or_img)
 
+    def get_vector(self):
+        return self.hists[0] + self.hists[1] + self.hists[2]
+
 
 class VFrame:
     """
@@ -64,3 +67,9 @@ class Video:
         for label in self.labels:
             if label.start <= timestamp < label.end:
                 return label
+
+    def get_label_list(self):
+        labels = []
+        for frame in self.frames:
+            labels.extend(self.get_label_from_timestamp(frame.timestamp))
+        return labels
