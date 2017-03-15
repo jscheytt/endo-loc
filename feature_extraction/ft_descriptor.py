@@ -1,3 +1,5 @@
+import feature_extraction.ft_extractor as fx
+
 DEF_FPS = 25  # default framerate
 DEF_NUMPX = 1920 * 1080
 
@@ -11,7 +13,6 @@ class FeatureDescriptor:
         if isinstance(hists_or_img, list):
             self.hists = hists_or_img
         else:
-            import feature_extraction.ft_extractor as fx
             self.hists = fx.get_histograms_hsv(hists_or_img)
 
     def get_vector(self):
@@ -50,7 +51,6 @@ class Video:
         self.numpx = numpx
 
         if xmlpath != "":
-            import feature_extraction.ft_extractor as fx
             self.fps, self.frames, self.numpx = fx.get_video_params_from_xml(xmlpath)
 
     def add_frame(self, frame):
