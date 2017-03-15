@@ -1,3 +1,6 @@
+VAL_SEP = ';'
+
+
 def clamp(n, minn, maxn):
     """
     Clamp an integer to a certain range.

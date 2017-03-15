@@ -1,4 +1,4 @@
-import feature_extraction.ft_extractor as fx
+import helper.helper
 
 DEF_FPS = 25  # default framerate
 DEF_NUMPX = 1920 * 1080
@@ -13,6 +13,7 @@ class FeatureDescriptor:
         if isinstance(hists_or_img, list):
             self.hists = hists_or_img
         else:
+            import feature_extraction.ft_extractor as fx
             self.hists = fx.get_histograms_hsv(hists_or_img)
 
     def get_vector(self):
@@ -49,8 +50,10 @@ class Video:
         self.frames = frames
         self.labels = labels
         self.numpx = numpx
+        self.label_list = []
 
         if xmlpath != "":
+            import feature_extraction.ft_extractor as fx
             self.fps, self.frames, self.numpx = fx.get_video_params_from_xml(xmlpath)
 
     def add_frame(self, frame):
@@ -75,13 +78,14 @@ class Video:
     def get_label_list(self):
         """
         Get all labels as an exhaustive list, i. e. with as many entries as there are frames.
+        This label_list is also added as an attribute of the Video object.
         :return: 1D list of ILabel objs
         """
-        labels = []
-        for frame in self.frames:
-            label_val = self.get_label_from_timestamp(frame.timestamp).value.value
-            labels.append(label_val)
-        return labels
+        if not self.label_list:
+            for frame in self.frames:
+                label_val = self.get_label_from_timestamp(frame.timestamp).value.value
+                self.label_list.append(label_val)
+        return self.label_list
 
     def get_featurevector_list(self):
         """
@@ -90,3 +94,17 @@ class Video:
         """
         vectors = [f.descriptor.get_vector() for f in self.frames]
         return vectors
+
+    def write_label_list(self, filename):
+        """
+        Write label list to a CSV file.
+        :param filename: file to write to
+        :return:
+        """
+        import csv
+        with open(filename, 'w', newline='') as csvfile:
+            import feature_extraction.ft_extractor as fx
+            writer = csv.writer(csvfile, delimiter=helper.helper.VAL_SEP, quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            self.get_label_list()
+            for idx, label in enumerate(self.label_list):
+                writer.writerow([self.frames[idx].timestamp.to_str(), label])

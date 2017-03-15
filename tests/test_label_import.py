@@ -7,6 +7,7 @@ import label_import.label as lb
 import label_import.label_importer as li
 import label_import.timestamp as lt
 import tests.conftest as cft
+import helper.helper as hlp
 
 
 @pytest.mark.skip(reason="contained in test_get_labels_from_file")
@@ -79,3 +80,10 @@ def test_get_label_list():
     label_list = video.get_label_list()
     assert len(label_list)
     assert len(video.frames) == len(label_list)
+
+
+def test_write_label_list():
+    labels = li.get_labels_from_file(cft.training_labels)
+    video = fd.Video(xmlpath=cft.training_video_ft, labels=labels)
+    video.write_label_list(cft.test_label_list)
+    assert hlp.file_length(cft.test_label_list)

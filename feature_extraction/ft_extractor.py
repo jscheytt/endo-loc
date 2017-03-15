@@ -1,5 +1,6 @@
-import cv2
 import logging
+
+import cv2
 from lxml import etree
 
 import feature_extraction.ft_descriptor as fd
@@ -14,7 +15,6 @@ FTDESCR_TAG = "ftdescr"
 HIST_TAG = "hist"
 FPS_TAG = "fps"
 NUMPX_TAG = "numpx"
-VAL_SEP = ';'
 
 
 def get_histograms_hsv(image):
@@ -39,7 +39,7 @@ def get_descriptor_as_xml(descriptor):
     descriptor_el = etree.Element(FTDESCR_TAG)
     for idx, hist in enumerate(descriptor.hists):
         hist_el = etree.SubElement(descriptor_el, HIST_TAG)
-        hist_el.text = VAL_SEP.join(str(item) for item in hist)
+        hist_el.text = hlp.VAL_SEP.join(str(item) for item in hist)
         descriptor_el.append(hist_el)
     return descriptor_el
 
@@ -140,7 +140,7 @@ def get_video_params_from_xml(filename):
         descriptor_el = vframe_el[0]
         hists = []
         for hist_el in descriptor_el:
-            hist = [int(x) for x in hist_el.text.split(VAL_SEP)]
+            hist = [int(x) for x in hist_el.text.split(hlp.VAL_SEP)]
             hists.append(hist)
         descriptor = fd.FeatureDescriptor(hists)
 
