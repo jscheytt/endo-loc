@@ -7,7 +7,7 @@ import logging
 
 
 def get_data_and_targets(xmlpath, labelspath):
-    labels = li.get_labels_from_file(labelspath)
+    labels = li.read_labels(labelspath)
     video = fd.Video(xmlpath=xmlpath, labels=labels)
     logging.info("Expand labels list ...")
     label_list = video.get_label_list()

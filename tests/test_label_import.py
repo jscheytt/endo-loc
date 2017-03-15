@@ -23,7 +23,7 @@ def test_get_label_obj():
 
 
 def test_get_labels_from_file():
-    ilabels = li.get_labels_from_file(cft.test_ilabel)
+    ilabels = li.read_labels(cft.test_ilabel)
     assert len(ilabels)
 
 
@@ -42,7 +42,7 @@ def test_get_label_from_timestamp():
     t2 = lt.Timestamp.from_str("0:01:19.76")
     val1 = lb.ILabelValue.OUT
     val2 = lb.ILabelValue.IN
-    labels = li.get_labels_from_file(cft.test_ilabel)
+    labels = li.read_labels(cft.test_ilabel)
     video = fd.Video(labels=labels)
     assert val1 == video.get_label_from_timestamp(t1).value
     assert val2 == video.get_label_from_timestamp(t2).value
@@ -75,7 +75,7 @@ def test_reduce_label_value():
 
 
 def test_get_label_list():
-    labels = li.get_labels_from_file(cft.training_labels)
+    labels = li.read_labels(cft.training_labels)
     video = fd.Video(xmlpath=cft.training_video_ft, labels=labels)
     label_list = video.get_label_list()
     assert len(label_list)
@@ -83,7 +83,12 @@ def test_get_label_list():
 
 
 def test_write_label_list():
-    labels = li.get_labels_from_file(cft.training_labels)
+    labels = li.read_labels(cft.training_labels)
     video = fd.Video(xmlpath=cft.training_video_ft, labels=labels)
     video.write_label_list(cft.test_label_list)
     assert hlp.file_length(cft.test_label_list)
+
+
+def test_read_label_list():
+    label_list = li.read_label_list(cft.test_label_list)
+    assert len(label_list)

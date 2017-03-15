@@ -67,7 +67,7 @@ def get_labels_from_mlstring(file_cont):
     return ilabels
 
 
-def get_labels_from_file(filename):
+def read_labels(filename):
     """
     Retrieve all labels from a textfile.
     :param filename: Path to textfile
@@ -76,3 +76,19 @@ def get_labels_from_file(filename):
     file_cont = get_textfile_as_str(filename)
     ilabels = get_labels_from_mlstring(file_cont)
     return ilabels
+
+
+def read_label_list(filename):
+    """
+    Read a list of label values from a CSV file.
+    :param filename: Path to the CSV file
+    :return: 1D list of label values
+    """
+    import csv
+    import helper.helper as hlp
+    label_list = []
+    with open(filename, newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=hlp.VAL_SEP, quotechar='|')
+        for row in reader:
+            label_list.append(row[1])
+    return label_list
