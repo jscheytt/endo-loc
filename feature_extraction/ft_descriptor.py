@@ -1,7 +1,4 @@
-import helper.helper
-
-DEF_FPS = 25  # default framerate
-DEF_NUMPX = 1920 * 1080
+import helper.helper as hlp
 
 
 class FeatureDescriptor:
@@ -41,12 +38,15 @@ class Video:
     All frames and corresponding target labels are contained herein.
     """
 
+    DEF_FPS = 25  # default framerate
+    DEF_NUMPX = 1920 * 1080
+
     def __init__(self, fps=DEF_FPS, frames=None, labels=None, numpx=DEF_NUMPX, xmlpath=""):
         if labels is None:
             labels = []
         if frames is None:
             frames = []
-        self.fps = fps
+        self.fps = int(fps)
         self.frames = frames
         self.labels = labels
         self.numpx = numpx
@@ -65,7 +65,7 @@ class Video:
         assert isinstance(frame, VFrame)
         self.frames.append(frame)
 
-    def get_label_from_timestamp(self, timestamp):
+    def get_label(self, timestamp):
         """
         Retrieve the target label corresponding to a certain timestamp from the list of labels.
         :param timestamp: Timestamp obj
@@ -75,17 +75,50 @@ class Video:
             if label.start <= timestamp < label.end:
                 return label
 
-    def get_label_list(self):
+    def fill_label_list(self):
         """
         Get all labels as an exhaustive list, i. e. with as many entries as there are frames.
         This label_list is also added as an attribute of the Video object.
         :return: 1D list of ILabel objs
         """
         if not self.label_list:
-            for frame in self.frames:
-                label_val = self.get_label_from_timestamp(frame.timestamp).value.value
+            import label_import.timestamp as ts
+            last_label = self.labels[-1]
+            last_timestamp = last_label.end
+            last_frameidx = last_timestamp.get_frameidx(self.fps)
+
+            for idx in range(0, last_frameidx, 1):
+                curr_timestamp = ts.Timestamp.from_frameidx_fps(idx, self.fps)
+                curr_label = self.get_label(curr_timestamp)
+                label_val = curr_label.value.value
                 self.label_list.append(label_val)
-        return self.label_list
+
+            self.adjust_list_lengths()
+
+    def adjust_list_lengths(self):
+        """
+        Validate label list length. Truncate or extend if necessary.
+        :return:
+        """
+        if self.frames:
+            if len(self.label_list) > len(self.frames):
+                del self.label_list[len(self.frames):]
+            elif len(self.label_list) < len(self.frames):
+                last_elem = self.label_list[-1]
+                while len(self.label_list) < len(self.frames):
+                    self.label_list.append(last_elem)
+            self.discard_obsolete_frames()
+
+    def discard_obsolete_frames(self):
+        """
+        Delete frames with ADS label.
+        :return:
+        """
+        import label_import.label as l
+        for idx in reversed(range(len(self.label_list))):
+            if self.label_list[idx] == l.ILabelValue.ADS.value:
+                del self.frames[idx]
+                del self.label_list[idx]
 
     def get_featurevector_list(self):
         """
@@ -103,8 +136,7 @@ class Video:
         """
         import csv
         with open(filename, 'w', newline='') as csvfile:
-            import feature_extraction.ft_extractor as fx
-            writer = csv.writer(csvfile, delimiter=helper.helper.VAL_SEP, quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            self.get_label_list()
+            writer = csv.writer(csvfile, delimiter=hlp.VAL_SEP, quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            self.fill_label_list()
             for idx, label in enumerate(self.label_list):
                 writer.writerow([self.frames[idx].timestamp.to_str(), label])

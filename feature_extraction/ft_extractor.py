@@ -133,7 +133,7 @@ def get_video_params_from_xml(filename):
     video_el = tree.getroot()
     frames_els = video_el.getchildren()
     frames = []
-    fps = video_el.get(FPS_TAG)
+    fps = int(video_el.get(FPS_TAG))
     numpx = video_el.get(NUMPX_TAG)
 
     for vframe_el in frames_els:

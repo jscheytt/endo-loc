@@ -44,8 +44,8 @@ def test_get_label_from_timestamp():
     val2 = lb.ILabelValue.IN
     labels = li.read_labels(cft.test_ilabel)
     video = fd.Video(labels=labels)
-    assert val1 == video.get_label_from_timestamp(t1).value
-    assert val2 == video.get_label_from_timestamp(t2).value
+    assert val1 == video.get_label(t1).value
+    assert val2 == video.get_label(t2).value
 
 
 def test_get_timestamp():
@@ -71,13 +71,13 @@ def test_reduce_label_value():
         assert red_l is not lb.ILabelValue.MOVING_OUT
         assert red_l is not lb.ILabelValue.IN_BETWEEN
         assert red_l is not lb.ILabelValue.EXIT
-        assert red_l is not lb.ILabelValue.ADS
 
 
-def test_get_label_list():
+def test_fill_label_list():
     labels = li.read_labels(cft.training_labels)
     video = fd.Video(xmlpath=cft.training_video_ft, labels=labels)
-    label_list = video.get_label_list()
+    video.fill_label_list()
+    label_list = video.label_list
     assert len(label_list)
     assert len(video.frames) == len(label_list)
 

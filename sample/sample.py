@@ -10,7 +10,8 @@ def get_data_and_targets(xmlpath, labelspath):
     labels = li.read_labels(labelspath)
     video = fd.Video(xmlpath=xmlpath, labels=labels)
     logging.info("Expand labels list ...")
-    label_list = video.get_label_list()
+    video.fill_label_list()
+    label_list = video.label_list
     logging.info("Labels list expanded.")
 
     ft_vec_list = video.get_featurevector_list()

@@ -22,7 +22,6 @@ def reduce_label_value(label_value):
     :return: ILabelValue obj of IN or OUT only
     """
     switcher = {
-        lb.ILabelValue.ADS: None,
         lb.ILabelValue.MOVING_IN: lb.ILabelValue.IN,
         lb.ILabelValue.MOVING_OUT: lb.ILabelValue.IN,
         lb.ILabelValue.IN_BETWEEN: lb.ILabelValue.IN,

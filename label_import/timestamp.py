@@ -65,10 +65,10 @@ class Timestamp:
         :param fps: Frames per second
         :return: Frame index of this Timestamp
         """
-        return self.hours * MIN_PER_H * S_PER_MIN * fps \
-               + self.minutes * S_PER_MIN * fps \
-               + self.seconds * fps \
-               + self.milliseconds // (100 / fps)
+        return int(self.hours * MIN_PER_H * S_PER_MIN * fps \
+                   + self.minutes * S_PER_MIN * fps \
+                   + self.seconds * fps \
+                   + self.milliseconds // (100 / fps))
 
     def __len__(self):
         return len(self.to_str())

@@ -5,7 +5,8 @@ class ILabelValue(Enum):
     """
     Possible values for an ILabel.
     """
-    IN, OUT, MOVING_IN, MOVING_OUT, IN_BETWEEN, EXIT, ADS = range(7)
+    IN, OUT, MOVING_IN, MOVING_OUT, IN_BETWEEN, EXIT = range(6)
+    ADS = -1
 
 
 class ILabel:
