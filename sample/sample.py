@@ -6,14 +6,9 @@ import preprocessing.preprocessor as pre
 import logging
 
 
-def get_data_and_targets(xmlpath, labelspath):
-    labels = li.read_labels(labelspath)
-    video = fd.Video(xmlpath=xmlpath, labels=labels)
-    logging.info("Expand labels list ...")
-    video.fill_label_list()
-    label_list = video.label_list
-    logging.info("Labels list expanded.")
-
+def get_data_and_targets(xmlpath, labellistpath):
+    label_list = li.read_label_list(labellistpath)
+    video = fd.Video(xmlpath=xmlpath, label_list=label_list)
     ft_vec_list = video.get_featurevector_list()
     logging.info("Import feature list ...")
     norm_ft_vec_list = pre.normalize_ft_vec_list(ft_vec_list, max_val=video.numpx)

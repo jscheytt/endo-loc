@@ -15,10 +15,12 @@ test_label_list = res_dir + "test_label_list.csv"
 training_video = res_dir + "video_train.mp4"
 training_video_ft = res_dir + "video_train_ft.xml"
 training_labels = res_dir + "video_train.ass"
+training_label_list = res_dir + "video_train.csv"
 
 eval_video = res_dir + "video_eval.mp4"
 eval_video_ft = res_dir + "video_eval_ft.xml"
 eval_labels = res_dir + "video_eval.ass"
+eval_label_list = res_dir + "video_eval.csv"
 
 
 @pytest.fixture(scope="module")

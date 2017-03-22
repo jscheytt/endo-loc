@@ -41,7 +41,9 @@ class Video:
     DEF_FPS = 25  # default framerate
     DEF_NUMPX = 1920 * 1080
 
-    def __init__(self, fps=DEF_FPS, frames=None, labels=None, numpx=DEF_NUMPX, xmlpath=""):
+    def __init__(self, fps=DEF_FPS, frames=None, labels=None, label_list=None, numpx=DEF_NUMPX, xmlpath=""):
+        if label_list is None:
+            label_list = []
         if labels is None:
             labels = []
         if frames is None:
@@ -50,7 +52,7 @@ class Video:
         self.frames = frames
         self.labels = labels
         self.numpx = numpx
-        self.label_list = []
+        self.label_list = label_list
 
         if xmlpath != "":
             import feature_extraction.ft_extractor as fx

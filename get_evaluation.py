@@ -16,7 +16,7 @@ def main(feat_train, labels_train, feat_eval, labels_eval):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Print evaluation metrics for learning a HSV classifier"
+    parser = argparse.ArgumentParser(description="Print evaluation metrics for learning a HSV classifier "
                                                  "on 2 sets of feature data + targets.")
     parser.add_argument("feat_train", help="The features file (.xml) for training the classifier")
     parser.add_argument("labels_train", help="The labels file (.ass) for training the classifier")
