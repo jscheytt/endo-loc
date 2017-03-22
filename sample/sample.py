@@ -13,12 +13,17 @@ def get_data_and_targets(xmlpath, labellistpath):
     :param labellistpath: Path to the label list CSV file
     :return:
     """
+    logging.info("Import label list ...")
     label_list = li.read_label_list(labellistpath)
+    logging.info("Label list imported.")
     video = fd.Video(xmlpath=xmlpath, label_list=label_list)
-    ft_vec_list = video.get_featurevector_list()
+
     logging.info("Import feature list ...")
-    norm_ft_vec_list = pre.normalize_ft_vec_list(ft_vec_list, max_val=video.numpx)
+    ft_vec_list = video.get_featurevector_list()
     logging.info("Feature list imported.")
+    logging.info("Preprocess feature list ...")
+    norm_ft_vec_list = pre.normalize_ft_vec_list(ft_vec_list, max_val=video.numpx)
+    logging.info("Feature list preprocessed.")
     return norm_ft_vec_list, label_list
 
 

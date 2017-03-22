@@ -1,5 +1,4 @@
 import numpy as np
-import sklearn.preprocessing as skpre
 
 
 def get_array(feature):

@@ -42,8 +42,6 @@ class Video:
     DEF_NUMPX = 1920 * 1080
 
     def __init__(self, fps=DEF_FPS, frames=None, labels=None, label_list=None, numpx=DEF_NUMPX, xmlpath=""):
-        if label_list is None:
-            label_list = []
         if labels is None:
             labels = []
         if frames is None:
@@ -57,6 +55,11 @@ class Video:
         if xmlpath != "":
             import feature_extraction.ft_extractor as fx
             self.fps, self.frames, self.numpx = fx.get_video_params_from_xml(xmlpath)
+
+        if self.label_list is None:
+            self.label_list = []
+        else:
+            self.adjust_list_lengths()
 
     def add_frame(self, frame):
         """
