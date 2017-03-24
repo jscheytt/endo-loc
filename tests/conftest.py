@@ -4,7 +4,7 @@ import pytest
 
 import feature_extraction.ft_extractor as fx
 
-res_dir = "res" + os.sep
+res_dir = "tests" + os.sep + "res" + os.sep
 
 example_img = res_dir + "test_image.jpg"  # alt: "test_image_2.jpg"
 example_vid = res_dir + "test_video_1s.mp4"  # alt: "test_video_1s.mp4", "test_video_100s.avi"
