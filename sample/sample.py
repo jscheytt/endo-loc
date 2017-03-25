@@ -34,7 +34,7 @@ def get_svclassifier(data, targets):
     :param targets: List of labels
     :return: The learned classifier
     """
-    clf = svm.SVC()
+    clf = svm.SVC(class_weight="balanced")
     logging.info("Fit SVM to data ...")
     clf.fit(data, targets)
     logging.info("SVM fitted.")
