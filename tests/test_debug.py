@@ -41,5 +41,5 @@ def test_display_video_histogram_hsv():
 
 
 def test_log_surr():
-    with dbg.LogSurr("Do this action"):
+    with dbg.LogCont("Do this action"):
         pass

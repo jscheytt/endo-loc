@@ -66,7 +66,7 @@ def plot_histograms_live(filename):
     cv2.destroyAllWindows()
 
 
-class LogSurr:
+class LogCont:
     def __init__(self, message):
         self.message = message
 
