@@ -89,5 +89,5 @@ def read_label_list(filename):
     with open(filename, newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=hlp.VAL_SEP, quotechar='|')
         for row in reader:
-            label_list.append(row[1])
+            label_list.append(int(row[1]))
     return label_list
