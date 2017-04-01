@@ -1,8 +1,11 @@
+import math
+
 import numpy as np
 
 from debug.debug import LogCont
 from feature_extraction import ft_descriptor as fd
 from label_import import label_importer as li
+from helper.helper import reverse_enum
 
 
 def get_array(feature):
@@ -44,5 +47,56 @@ def get_data_and_targets(xmlpath, labellistpath):
         video = fd.Video(xmlpath=xmlpath, label_list=label_list)
         ft_vec_list = video.get_featurevector_list()
     with LogCont("Preprocess feature list"):
-        norm_ft_vec_list = pre.normalize_ft_vec_list(ft_vec_list, max_val=video.numpx)
+        norm_ft_vec_list = normalize_ft_vec_list(ft_vec_list, max_val=video.numpx)
     return norm_ft_vec_list, label_list
+
+
+def classes_balanced(c1, c2):
+    """
+    Check if the ratio of class sizes is within the accepted range for balance.
+    :param c1: 
+    :param c2: 
+    :return: 
+    """
+    return 0.5 <= len(c1) / len(c2) <= 2
+
+
+def get_indices_of_classes(X, y):
+    """
+    Get indices of all feature vectors of all classes, grouped by their class label. 
+    :param X: list of feature vectors
+    :param y: class labels, integers from 0 to n
+    :return: 2D list of feature vector indices grouped by class label
+    """
+    num_classes = len(set(y))
+    classes = []
+    for i in range(num_classes):
+        classes.append([])
+    for idx, elem in enumerate(X):
+        class_idx = y[idx]
+        classes[class_idx].append(idx)
+    return classes
+
+
+def balance_class_sizes(X, y):
+    """
+    Balance classes for binary classification.
+    :param X: list of feature vectors
+    :param y: class labels (0 and 1)
+    :return: 2 balanced classes
+    """
+    cl0, cl1 = get_indices_of_classes(X, y)
+    len_maj = 0
+    len_min = 1
+    if len(cl0) > len(cl1):
+        len_maj = len(cl0)
+        len_min = len(cl1)
+    else:
+        len_maj = len(cl1)
+        len_min = len(cl0)
+    n = math.floor(len_maj / len_min)
+    for idx, elem in reverse_enum(X):
+        if idx % n != 0:
+            del X[idx]
+            del y[idx]
+    return X, y
