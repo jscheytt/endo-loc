@@ -1,6 +1,7 @@
 import argparse
 import logging.config
 
+import preprocessing.preprocessor
 import sample.sample as s
 
 
@@ -8,9 +9,9 @@ def main(feat_train, label_list_train, feat_eval, label_list_eval):
     # Load Logging settings
     logging.config.fileConfig("logging_config.ini")
 
-    data_train, targets_train = s.get_data_and_targets(feat_train, label_list_train)
+    data_train, targets_train = preprocessing.preprocessor.get_data_and_targets(feat_train, label_list_train)
     svc = s.get_svclassifier(data_train, targets_train)
-    data_eval, targets_eval = s.get_data_and_targets(feat_eval, label_list_eval)
+    data_eval, targets_eval = preprocessing.preprocessor.get_data_and_targets(feat_eval, label_list_eval)
     evaluation = s.get_evaluation(svc, data_eval, targets_eval)
     print(evaluation)
 
