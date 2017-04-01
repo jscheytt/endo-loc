@@ -2,7 +2,7 @@ from .context import sample
 
 import pytest
 
-import preprocessing.preprocessor as pre
+import prep.preprocessor as pre
 import helper.helper as hlp
 
 import numpy as np

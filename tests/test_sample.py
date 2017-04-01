@@ -2,7 +2,7 @@ from .context import sample
 
 import tests.conftest as cft
 import sample.sample as s
-import preprocessing.preprocessor as pre
+import prep.preprocessor as pre
 
 
 def test_get_svclassifier():
