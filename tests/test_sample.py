@@ -5,15 +5,15 @@ import sample.sample as s
 
 
 def test_get_svclassifier():
-    data_train, targets_train = s.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
-    svc = s.get_svclassifier(data_train, targets_train)
+    X_train, y_train = s.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
+    svc = s.get_svclassifier(X_train, y_train)
     assert svc is not None
     assert svc.n_support_[0] > 0
 
 
 def test_get_evaluation():
-    data_train, targets_train = s.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
-    svc = s.get_svclassifier(data_train, targets_train)
-    data_eval, targets_eval = s.get_data_and_targets(cft.eval_video_ft, cft.eval_label_list)
-    evaluation = s.get_evaluation(svc, data_eval, targets_eval)
+    X_train, y_train = s.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
+    svc = s.get_svclassifier(X_train, y_train)
+    X_eval, y_eval = s.get_data_and_targets(cft.eval_video_ft, cft.eval_label_list)
+    evaluation = s.get_evaluation(svc, X_eval, y_eval)
     assert evaluation != ""
