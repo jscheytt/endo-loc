@@ -66,3 +66,13 @@ def maxval_of_2dlist(ll):
     for l in ll:
         maxval = max(l)
     return maxval
+
+
+def reverse_enum(l):
+    """
+    Generator for reverse traversal with access to the index.
+    :param l: 
+    :return: 
+    """
+    for index in reversed(range(len(l))):
+        yield index, l[index]
