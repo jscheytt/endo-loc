@@ -63,3 +63,16 @@ def test_get_indices_of_classes():
     y = [0, 1, 1, 0, 0, 1]
     classes = pre.get_indices_of_classes(X, y)
     assert len(classes[0]) == len(classes[1])
+
+
+def test_get_train_test_data_targets():
+    X, y = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
+    X_train, X_test, y_train, y_test = pre.get_train_test_data_targets(X, y)
+    assert len(X_train)
+    assert len(X_test)
+    assert len(y_train)
+    assert len(y_test)
+    assert len(X_train) > len(X_test)
+    assert len(y_train) > len(y_test)
+    assert len(X_train) == len(y_train)
+    assert len(X_test) == len(y_test)

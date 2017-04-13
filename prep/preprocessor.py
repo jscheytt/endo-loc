@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+from sklearn.model_selection import train_test_split
 
 from debug.debug import LogCont
 from feature_extraction import ft_descriptor as fd
@@ -34,11 +35,12 @@ def normalize_ft_vec_list(ft_vec_list, max_val):
     return ft_vec_list_norm_np
 
 
-def get_data_and_targets(xmlpath, labellistpath):
+def get_data_and_targets(xmlpath, labellistpath, do_subsampling=False):
     """
     Get sklearn-conform lists of features (data) and labels (targets).
     :param xmlpath: Path to the feature XML file
     :param labellistpath: Path to the label list CSV file
+    :param do_subsampling: Subsample majority class
     :return:
     """
     with LogCont("Import label list"):
@@ -48,7 +50,20 @@ def get_data_and_targets(xmlpath, labellistpath):
         ft_vec_list = video.get_featurevector_list()
     with LogCont("Preprocess feature list"):
         norm_ft_vec_list = normalize_ft_vec_list(ft_vec_list, max_val=video.numpx)
+    if do_subsampling:
+        balance_class_sizes(norm_ft_vec_list, label_list)
     return norm_ft_vec_list, label_list
+
+
+def get_train_test_data_targets(X, y):
+    """
+    Split 1 feature vector and corresponding label list into training and test data. 
+    :param X: 
+    :param y: 
+    :return: 
+    """
+    with LogCont("Split data/targets into training and test set"):
+        return train_test_split(X, y)
 
 
 def classes_balanced(c1, c2):
@@ -85,17 +100,18 @@ def balance_class_sizes(X, y):
     :param y: class labels (0 and 1)
     :return: 2 balanced classes
     """
-    cl0, cl1 = get_indices_of_classes(X, y)
-    if len(cl0) > len(cl1):
-        len_maj = len(cl0)
-        len_min = len(cl1)
-        cl_maj = cl0
-    else:
-        len_maj = len(cl1)
-        len_min = len(cl0)
-        cl_maj = cl1
-    n = math.floor(len_maj / len_min)
-    for idx, elem in reverse_enum(cl_maj):
-        if idx % n != 0:
-            del X[elem]
-            del y[elem]
+    with LogCont("Subsample majority class"):
+        cl0, cl1 = get_indices_of_classes(X, y)
+        if len(cl0) > len(cl1):
+            len_maj = len(cl0)
+            len_min = len(cl1)
+            cl_maj = cl0
+        else:
+            len_maj = len(cl1)
+            len_min = len(cl0)
+            cl_maj = cl1
+        n = math.floor(len_maj / len_min)
+        for idx, elem in reverse_enum(cl_maj):
+            if idx % n != 0:
+                del X[elem]
+                del y[elem]
