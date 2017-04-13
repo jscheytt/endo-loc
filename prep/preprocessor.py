@@ -86,17 +86,16 @@ def balance_class_sizes(X, y):
     :return: 2 balanced classes
     """
     cl0, cl1 = get_indices_of_classes(X, y)
-    len_maj = 0
-    len_min = 1
     if len(cl0) > len(cl1):
         len_maj = len(cl0)
         len_min = len(cl1)
+        cl_maj = cl0
     else:
         len_maj = len(cl1)
         len_min = len(cl0)
+        cl_maj = cl1
     n = math.floor(len_maj / len_min)
-    for idx, elem in reverse_enum(X):
+    for idx, elem in reverse_enum(cl_maj):
         if idx % n != 0:
-            del X[idx]
-            del y[idx]
-    return X, y
+            del X[elem]
+            del y[elem]

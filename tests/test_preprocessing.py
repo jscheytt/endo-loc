@@ -35,8 +35,10 @@ def test_normalize_lists(feature):
 
 def test_balance_class_sizes():
     X, y = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
-    X_bal, y_bal = pre.balance_class_sizes(X, y)
-    classes = pre.get_indices_of_classes(X_bal, y_bal)
+    # X_bal, y_bal = pre.balance_class_sizes(X, y)
+    pre.balance_class_sizes(X, y)
+    # classes = pre.get_indices_of_classes(X_bal, y_bal)
+    classes = pre.get_indices_of_classes(X, y)
     for c in classes:
         assert pre.classes_balanced(classes[0], c)
 
