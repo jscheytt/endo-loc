@@ -22,6 +22,8 @@ eval_video_ft = res_dir + "video_eval_ft.xml"
 eval_labels = res_dir + "video_eval.ass"
 eval_label_list = res_dir + "video_eval.csv"
 
+clf_dump = res_dir + "svclassifier.pkl"
+
 
 @pytest.fixture(scope="module")
 def test_image():

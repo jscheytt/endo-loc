@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.externals import joblib
 
 from sklearn import svm, metrics
 from sklearn.model_selection import GridSearchCV
@@ -98,3 +99,22 @@ def plot_grid_search_results(grid, C_range, gamma_range):
     plt.yticks(np.arange(len(C_range)), C_range)
     plt.title('Validation accuracy')
     plt.show()
+
+
+def write_classifier(clf, filepath):
+    """
+    Write a classifier to the filepath.
+    :param clf: classifier from sklearn
+    :param filepath: 
+    :return: 
+    """
+    joblib.dump(clf, filepath)
+
+
+def read_classifier(filepath):
+    """
+    Read a classifier from filepath
+    :param filepath: 
+    :return: classifier 
+    """
+    return joblib.load(filepath)

@@ -5,6 +5,7 @@ from .context import sample
 import tests.conftest as cft
 import sample.sample as s
 import prep.preprocessor as pre
+import helper.helper as hlp
 
 
 def test_get_svclassifier():
@@ -22,6 +23,7 @@ def test_get_evaluation():
     assert evaluation != ""
 
 
+@pytest.mark.skip(reason="Intensive")
 def test_get_grid_search():
     X, y = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list, do_subsampling=True)
     C_range, gamma_range, grid = s.get_grid_search(X, y)
@@ -33,3 +35,16 @@ def test_plot_grid_search_results():
     X, y = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list, do_subsampling=True)
     C_range, gamma_range, grid = s.get_grid_search(X, y)
     s.plot_grid_search_results(grid, C_range, gamma_range)
+
+
+def test_export_classifier():
+    X_train, y_train = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
+    svc = s.get_svclassifier(X_train, y_train)
+    s.write_classifier(svc, cft.clf_dump)
+    assert hlp.file_length(cft.clf_dump)
+
+
+def test_import_classifier():
+    svc = s.read_classifier(cft.clf_dump)
+    assert svc is not None
+    assert svc.n_support_[0] > 0
