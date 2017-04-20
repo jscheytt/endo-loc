@@ -115,3 +115,12 @@ def balance_class_sizes(X, y):
             if idx % n != 0:
                 del X[elem]
                 del y[elem]
+
+
+def get_combined_nparrays(*args):
+    """
+    Concatenate numpy arrays
+    :param args: a tuple of numpy arrays 
+    :return: 
+    """
+    return np.concatenate(args)

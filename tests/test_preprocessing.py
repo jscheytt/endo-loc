@@ -76,3 +76,13 @@ def test_get_train_test_data_targets():
     assert len(y_train) > len(y_test)
     assert len(X_train) == len(y_train)
     assert len(X_test) == len(y_test)
+
+
+def test_get_combined_data_and_targets():
+    X1, y1 = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
+    X2, y2 = pre.get_data_and_targets(cft.eval_video_ft, cft.eval_label_list)
+    X = pre.get_combined_nparrays(X1, X2)
+    y = pre.get_combined_nparrays(y1, y2)
+    assert len(X) == len(X1) + len(X2)
+    assert len(y) == len(y1) + len(y2)
+    assert len(X) == len(y)
