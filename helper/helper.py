@@ -1,3 +1,8 @@
+import logging
+import logging.config
+
+import yaml
+
 VAL_SEP = ';'
 
 
@@ -76,3 +81,7 @@ def reverse_enum(l):
     """
     for index in reversed(range(len(l))):
         yield index, l[index]
+
+
+def setup_logging():
+    logging.config.dictConfig(yaml.load(open('logging.conf', 'r')))

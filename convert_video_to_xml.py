@@ -1,6 +1,4 @@
 import argparse
-import logging
-import logging.config
 
 import feature_extraction.ft_extractor as fx
 import helper.helper as hlp
@@ -14,8 +12,7 @@ def get_default_target_filename(video_filename):
 
 
 def main(videofile):
-    # Load Logging settings
-    logging.config.fileConfig("logging_config.ini")
+    hlp.setup_logging()
 
     videoxml = fx.get_xml_from_videofile(videofile)
 

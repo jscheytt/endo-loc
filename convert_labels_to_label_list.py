@@ -1,6 +1,4 @@
 import argparse
-import logging
-import logging.config
 
 import feature_extraction.ft_descriptor as fd
 import label_import.label_importer as li
@@ -15,8 +13,7 @@ def get_default_target_filename(filename):
 
 
 def main(labelsfile, featurefile):
-    # Load Logging settings
-    logging.config.fileConfig("logging_config.ini")
+    hlp.setup_logging()
 
     labels = li.read_labels(labelsfile)
     target_filename = get_default_target_filename(labelsfile)

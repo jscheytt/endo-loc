@@ -1,13 +1,12 @@
 import argparse
-import logging.config
 
 import prep.preprocessor as pre
 import sample.sample as s
+import helper.helper as hlp
 
 
 def main(feat_train, label_list_train, feat_eval, label_list_eval, do_subsampling):
-    # Load Logging settings
-    logging.config.fileConfig("logging_config.ini")
+    hlp.setup_logging()
 
     if feat_eval is None and label_list_eval is None:
         X, y = pre.get_data_and_targets(feat_train, label_list_train, do_subsampling=do_subsampling)
