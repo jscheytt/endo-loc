@@ -85,3 +85,12 @@ def reverse_enum(l):
 
 def setup_logging():
     logging.config.dictConfig(yaml.load(open('logging.conf', 'r')))
+
+
+def log(message):
+    """
+    Log an info message to the standard loggers.
+    :param message: 
+    :return: 
+    """
+    logging.info(message)

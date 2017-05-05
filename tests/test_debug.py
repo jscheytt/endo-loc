@@ -7,10 +7,6 @@ import feature_extraction.ft_extractor as fx
 import tests.conftest as cft
 
 
-def test_load_image(test_image):
-    assert len(test_image)
-
-
 @pytest.mark.skip(reason="GUI")
 def test_display_image(test_image):
     dbg.display_image(test_image)

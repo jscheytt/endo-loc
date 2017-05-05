@@ -8,38 +8,45 @@ import prep.preprocessor as pre
 import helper.helper as hlp
 
 
-def test_get_svclassifier():
-    X_train, y_train = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
+def test_get_svclassifier(test_data_and_targets):
+    X_train, y_train = test_data_and_targets
     svc = s.get_svclassifier(X_train, y_train)
     assert svc is not None
     assert svc.n_support_[0] > 0
 
 
-def test_get_evaluation():
-    X_train, y_train = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
+def test_get_evaluation(test_data_and_targets, eval_data_and_targets):
+    X_train, y_train = test_data_and_targets
     svc = s.get_svclassifier(X_train, y_train)
-    X_eval, y_eval = pre.get_data_and_targets(cft.eval_video_ft, cft.eval_label_list)
-    evaluation = s.get_evaluation(svc, X_eval, y_eval)
+    X_eval, y_eval = eval_data_and_targets
+    evaluation = s.get_evaluation_report(svc, X_eval, y_eval)
     assert evaluation != ""
 
 
 @pytest.mark.skip(reason="Intensive")
-def test_get_grid_search():
-    X, y = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list, do_subsampling=True)
+def test_get_grid_search(test_data_and_targets_subsampled):
+    X, y = test_data_and_targets_subsampled
     C_range, gamma_range, grid = s.get_grid_search(X, y)
     assert grid is not None
 
 
+@pytest.mark.skip(reason="Intensive")
+def test_get_best_params(test_data_and_targets_subsampled):
+    X, y = test_data_and_targets_subsampled
+    best_params = s.get_best_params(X, y)
+    assert len(best_params)
+
+
 @pytest.mark.skip(reason="GUI")
-def test_plot_grid_search_results():
-    X, y = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list, do_subsampling=True)
+def test_plot_grid_search_results(test_data_and_targets_subsampled):
+    X, y = test_data_and_targets_subsampled
     C_range, gamma_range, grid = s.get_grid_search(X, y)
     s.plot_grid_search_results(grid, C_range, gamma_range)
 
 
-def test_export_classifier():
-    X_train, y_train = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
-    svc = s.get_svclassifier(X_train, y_train)
+def test_export_classifier(test_data_and_targets):
+    X, y = test_data_and_targets
+    svc = s.get_svclassifier(X, y)
     s.write_classifier(svc, cft.clf_dump)
     assert hlp.file_length(cft.clf_dump)
 

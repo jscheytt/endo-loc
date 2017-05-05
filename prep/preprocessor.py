@@ -1,5 +1,6 @@
+import os
+import glob
 import math
-
 import numpy as np
 from sklearn.model_selection import train_test_split
 
@@ -101,7 +102,12 @@ def balance_class_sizes(X, y):
     :return: 2 balanced classes
     """
     with LogCont("Subsample majority class"):
-        cl0, cl1 = get_indices_of_classes(X, y)
+        indices_of_classes = get_indices_of_classes(X, y)
+        cl0 = indices_of_classes[0]
+        if len(indices_of_classes) > 1:
+            cl1 = indices_of_classes[1]
+        else:
+            cl1 = []
         if len(cl0) > len(cl1):
             len_maj = len(cl0)
             len_min = len(cl1)
@@ -110,11 +116,12 @@ def balance_class_sizes(X, y):
             len_maj = len(cl1)
             len_min = len(cl0)
             cl_maj = cl1
-        n = math.floor(len_maj / len_min)
-        for idx, elem in reverse_enum(cl_maj):
-            if idx % n != 0:
-                del X[elem]
-                del y[elem]
+        if len_min != 0:
+            n = math.floor(len_maj / len_min)
+            for idx, elem in reverse_enum(cl_maj):
+                if idx % n != 0:
+                    del X[elem]
+                    del y[elem]
 
 
 def get_combined_nparrays(*args):
@@ -124,3 +131,28 @@ def get_combined_nparrays(*args):
     :return: 
     """
     return np.concatenate(args)
+
+
+def get_multiple_data_and_targets(dir_filepath, do_subsampling=False):
+    """
+    Get multiple datas and targets's from a directory.
+    :param dir_filepath: 
+    :param do_subsampling: 
+    :return: 
+    """
+    global X_comb, y_comb
+
+    cwd = os.getcwd()
+    os.chdir(dir_filepath)
+    for idx, file in enumerate(glob.glob("*.xml")):
+        xml = file
+        csv = os.path.splitext(file)[0] + ".csv"
+        if idx == 0:  # Initialize
+            X_comb, y_comb = get_data_and_targets(xml, csv, do_subsampling=do_subsampling)
+        else:
+            X_part, y_part = get_data_and_targets(xml, csv, do_subsampling=do_subsampling)
+            X_comb = get_combined_nparrays(X_comb, X_part)
+            y_comb = get_combined_nparrays(y_comb, y_part)
+    os.chdir(cwd)
+
+    return X_comb, y_comb

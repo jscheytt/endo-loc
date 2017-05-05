@@ -33,8 +33,8 @@ def test_normalize_lists(feature):
     assert 0 <= maxval <= max_val
 
 
-def test_balance_class_sizes():
-    X, y = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
+def test_balance_class_sizes(test_data_and_targets):
+    X, y = test_data_and_targets
     # X_bal, y_bal = pre.balance_class_sizes(X, y)
     pre.balance_class_sizes(X, y)
     # classes = pre.get_indices_of_classes(X_bal, y_bal)
@@ -65,8 +65,8 @@ def test_get_indices_of_classes():
     assert len(classes[0]) == len(classes[1])
 
 
-def test_get_train_test_data_targets():
-    X, y = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
+def test_get_train_test_data_targets(test_data_and_targets):
+    X, y = test_data_and_targets
     X_train, X_test, y_train, y_test = pre.get_train_test_data_targets(X, y)
     assert len(X_train)
     assert len(X_test)
@@ -78,11 +78,18 @@ def test_get_train_test_data_targets():
     assert len(X_test) == len(y_test)
 
 
-def test_get_combined_data_and_targets():
-    X1, y1 = pre.get_data_and_targets(cft.training_video_ft, cft.training_label_list)
-    X2, y2 = pre.get_data_and_targets(cft.eval_video_ft, cft.eval_label_list)
+def test_get_combined_data_and_targets(test_data_and_targets, eval_data_and_targets):
+    X1, y1 = test_data_and_targets
+    X2, y2 = eval_data_and_targets
     X = pre.get_combined_nparrays(X1, X2)
     y = pre.get_combined_nparrays(y1, y2)
     assert len(X) == len(X1) + len(X2)
     assert len(y) == len(y1) + len(y2)
     assert len(X) == len(y)
+
+
+def test_get_multiple_data_and_targets():
+    X_comb, y_comb = pre.get_multiple_data_and_targets(cft.data_targets_directory, do_subsampling=True)
+    assert len(X_comb)
+    assert len(y_comb)
+    assert len(X_comb) == len(y_comb)

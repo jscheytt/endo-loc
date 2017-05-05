@@ -16,7 +16,7 @@ def main(feat_train, label_list_train, feat_eval, label_list_eval, do_subsamplin
         X_test, y_test = pre.get_data_and_targets(feat_eval, label_list_eval)
 
     svc = s.get_svclassifier(X_train, y_train)
-    evaluation = s.get_evaluation(svc, X_test, y_test)
+    evaluation = s.get_evaluation_report(svc, X_test, y_test)
     print(evaluation)
 
 

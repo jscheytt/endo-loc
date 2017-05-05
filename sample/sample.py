@@ -25,7 +25,7 @@ def get_svclassifier(X, y, C=1.0, gamma='auto'):
     return clf
 
 
-def get_evaluation(classifier, X, y):
+def get_evaluation_report(classifier, X, y):
     """
     Get an evaluation report on the prediction correctness of the classifier.
     :param classifier:
@@ -59,6 +59,17 @@ def get_grid_search(X, y):
               % (grid.best_params_, grid.best_score_))
 
     return C_range, gamma_range, grid
+
+
+def get_best_params(X, y):
+    """
+    Perform a grid search and return the best parameters.
+    :param X: 
+    :param y: 
+    :return: 
+    """
+    _, _, grid_search = get_grid_search(X, y)
+    return grid_search.best_params_
 
 
 def plot_grid_search_results(grid, C_range, gamma_range):
