@@ -4,7 +4,7 @@ setup(
     name='endo-cv',
     version='',
     packages=['tests', 'sample', 'label_import', 'feature_extraction'],
-    install_requires=['pytest', 'matplotlib', 'lxml', 'cv2', 'numpy', 'sklearn'],
+    install_requires=['pytest', 'matplotlib', 'lxml', 'cv2', 'numpy', 'sklearn', 'yaml'],
     url='',
     license='Apache-2.0',
     author='JS',

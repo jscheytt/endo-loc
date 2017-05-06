@@ -1,5 +1,6 @@
 matplotlib
 pytest
+yaml
 lxml
 numpy
 sklearn
