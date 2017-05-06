@@ -4,7 +4,6 @@ from .context import sample
 
 import tests.conftest as cft
 import sample.sample as s
-import prep.preprocessor as pre
 import helper.helper as hlp
 
 
