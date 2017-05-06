@@ -1,6 +1,6 @@
 matplotlib
 pytest
 lxml
-cv2
 numpy
 sklearn
+cv2
