@@ -1,6 +1,7 @@
 import logging
 import logging.config
 
+import cv2
 import yaml
 
 VAL_SEP = ';'
@@ -94,3 +95,43 @@ def log(message):
     :return: 
     """
     logging.info(message)
+
+
+def get_histogram(img):
+    """
+    Get histogram of a color or grayscale image.
+    :param img: 
+    :return: 
+    """
+    if len(img.shape) > 2:  # Color image
+        hist = cv2.calcHist([img], [0, 1, 2], None, [8, 8, 8],
+                            [0, 256, 0, 256, 0, 256])
+    else:  # Supposed grayscale image
+        hist = cv2.calcHist([img], [0], None, [256], [0, 256])
+    return hist
+
+
+def compare_imgs_by_hist(img1, img2):
+    """
+    Compare two images by their histograms.
+    The histograms are compared by their correlation.
+    :param img1: 
+    :param img2: 
+    :return: 1.0 if images are identical, <1.0 if not, 0 if histograms
+    have different shapes (e. g. because of gray to RGB comparison)
+    """
+    hist1 = get_histogram(img1)
+    hist2 = get_histogram(img2)
+    if hist1.shape != hist2.shape:
+        return 0
+    return cv2.compareHist(hist1, hist2, cv2.HISTCMP_CORREL)
+
+
+def imgs_different(img1, img2):
+    """
+    Compares two images by their histogram correlation.
+    :param img1: 
+    :param img2: 
+    :return: True if different, False if identical
+    """
+    return compare_imgs_by_hist(img1, img2) != 1.0

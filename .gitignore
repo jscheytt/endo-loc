@@ -5,4 +5,4 @@ tests/res/video_eval.mp4
 tests/res/video_train.mp4
 tests/res/data_targets_test/
 */__pycache__/
-logs/
+logs/*

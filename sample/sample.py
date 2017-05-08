@@ -129,3 +129,14 @@ def read_classifier(filepath):
     :return: classifier 
     """
     return joblib.load(filepath)
+
+
+def predict_single_ft_vec(clf, ft_vec):
+    """
+    Predict the class label on a single feature vector.
+    :param clf: classifier to be used for prediction
+    :param ft_vec: feature vector without label
+    :return: class label value
+    """
+    value = clf.predict(ft_vec)
+    return value
