@@ -1,5 +1,4 @@
 import cv2
-from dask.dataframe.core import _Frame
 
 import feature_extraction.ft_descriptor as fd
 import feature_extraction.ft_extractor as fx
@@ -12,22 +11,22 @@ import vis.geometry as geom
 global clf
 
 
-def do_workflow(frame):
+def display_predict_on_frame(frame):
     """
     Display a video stream and classify each frame live.
     :return: 
     """
-    downscaled = geom.resize_img(frame, fx=0.2, fy=0.2)
+    downscaled = geom.resize_img(frame, fx=0.4, fy=0.4)
     # downscaled = frame
-    # res = resize_img(frame, fx=0.7, fy=0.7)
 
     ft_vec = get_live_ft_vec(downscaled)
+    # ft_vec = get_live_ft_vec(frame)
     label = predict_label(clf, ft_vec)
 
-    # draw_label(res, label)
+    # draw_label(downscaled, label)
     draw_label(frame, label)
 
-    # dst = res
+    # dst = downscaled
     dst = frame
     dsp.show_frame(dst, fullscreen=True)
 

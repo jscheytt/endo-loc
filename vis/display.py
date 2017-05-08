@@ -3,6 +3,7 @@ import tkinter
 import cv2
 
 WINDOW_TITLE = 'video'
+TKINTER_ROOT = tkinter.Tk()
 
 
 def display_video(filename):
@@ -81,7 +82,6 @@ def get_screen_dims():
     # http://stackoverflow.com/questions/3129322/how-do-i-get-monitor-resolution-in-python/31171430#31171430
     # alternative solutions:
     # https://www.blog.pythonlibrary.org/2015/08/18/getting-your-screen-resolution-with-python/
-    root = tkinter.Tk()
-    width = root.winfo_screenwidth()
-    height = root.winfo_screenheight()
+    width = TKINTER_ROOT.winfo_screenwidth()
+    height = TKINTER_ROOT.winfo_screenheight()
     return width, height

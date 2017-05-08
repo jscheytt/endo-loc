@@ -36,7 +36,7 @@ def test_resize_for_fullscreen(test_image):
 # @pytest.mark.skip(reason="GUI")
 def test_classify_live():
     cllv.clf = s.read_classifier(cft.clf_dump)
-    dsp.process_video(cft.training_video, cllv.do_workflow)
+    dsp.process_video(cft.training_video, cllv.display_predict_on_frame)
 
 
 @pytest.fixture(scope="module")
