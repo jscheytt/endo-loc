@@ -4,6 +4,7 @@ import cv2
 
 WINDOW_TITLE = 'video'
 TKINTER_ROOT = tkinter.Tk()
+FRAME_COUNT = 0
 
 
 def display_video(filename):
@@ -15,21 +16,25 @@ def display_video(filename):
     process_video(filename, show_frame)
 
 
-def process_video(filename, action):
+def process_video(src, action, skip_frames=0):
     """
     Process a video frame by frame, executing the action on every frame.
-    :param filename: Path to the video file
-    :param action: Function to be called, must have 1 parameter (frame)
+    :param src: Path to the video file OR int signifying camera
+    :param action: Function to be called, must have 2 parameters (frame and skip_frames)
+    :param skip_frames: 
     :return: 
     """
     cap = cv2.VideoCapture()
     if not cap.isOpened():
-        cap.open(filename)
+        cap.open(src)
 
+    global FRAME_COUNT
+    FRAME_COUNT = 0
     while cap.isOpened():
         ret, frame = cap.read()
+        FRAME_COUNT += 1
 
-        action(frame)
+        action(frame, skip_frames)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

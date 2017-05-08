@@ -26,7 +26,6 @@ def resize_for_fullscreen(img):
     """
     screen_width, screen_height = dsp.get_screen_dims()
     img_width, img_height = get_img_dims(img)
-
     ratio_screen = screen_width / screen_height
     ratio_img = img_width / img_height
     ratio_of_ratios = ratio_screen / ratio_img
@@ -51,6 +50,37 @@ def resize_for_fullscreen(img):
     filled = cv2.copyMakeBorder(resized, border_top, border_bottom, border_left, border_right,
                                 cv2.BORDER_CONSTANT, value=(0, 0, 0))
 
+    return filled
+
+
+def fill_img_for_fullscreen(img):
+    """
+    Add black borders to top/bottom or left/right so as to scale to fullscreen
+    keeping the image aspect ratio.
+    :param img: 
+    :return: 
+    """
+    screen_width, screen_height = dsp.get_screen_dims()
+    img_width, img_height = get_img_dims(img)
+    ratio_screen = screen_width / screen_height
+    ratio_img = img_width / img_height
+    ratio_of_ratios = ratio_screen / ratio_img
+
+    if ratio_of_ratios >= 1.0:
+        new_width = img_width * ratio_screen / ratio_img
+        border_top = border_bottom = 0
+        border_left = math.floor((new_width - img_width) / 2)
+        border_right = math.ceil((new_width - img_width) / 2)
+    else:
+        new_height = img_height * ratio_img / ratio_screen
+        border_top = math.floor((new_height - img_height) / 2)
+        border_bottom = math.ceil((new_height - img_height) / 2)
+        border_left = border_right = 0
+    if border_top == border_bottom == border_left == border_right == 0:
+        filled = img
+    else:
+        filled = cv2.copyMakeBorder(img, border_top, border_bottom, border_left, border_right,
+                                    cv2.BORDER_CONSTANT, value=(0, 0, 0))
     return filled
 
 

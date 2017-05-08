@@ -33,9 +33,25 @@ def test_resize_for_fullscreen(test_image):
     assert resized_dims == screen_dim
 
 
-# @pytest.mark.skip(reason="GUI")
+def test_fill_for_fullscreen(test_image, test_image_rot):
+    screen_width, screen_height = dsp.get_screen_dims()
+    ratio_screen = screen_width / screen_height
+
+    filled1 = geom.fill_img_for_fullscreen(test_image)
+    filled1_width, filled1_height = geom.get_img_dims(filled1)
+    ratio_filled1 = filled1_width / filled1_height
+
+    filled2 = geom.fill_img_for_fullscreen(test_image_rot)
+    filled2_width, filled2_height = geom.get_img_dims(filled2)
+    ratio_filled2 = filled2_width / filled2_height
+
+    assert ratio_filled1 == pytest.approx(ratio_screen, 1e-2)
+    assert ratio_filled2 == pytest.approx(ratio_screen, 1e-2)
+
+
+@pytest.mark.skip(reason="GUI")
 def test_classify_live():
-    cllv.clf = s.read_classifier(cft.clf_dump)
+    cllv.CLF = s.read_classifier(cft.clf_dump)
     dsp.process_video(cft.training_video, cllv.display_predict_on_frame)
 
 

@@ -8,26 +8,35 @@ import sample.sample as s
 import vis.display as dsp
 import vis.geometry as geom
 
-global clf
+CLF = None
+PREV_LABEL = None
 
 
-def display_predict_on_frame(frame):
+def display_predict_on_frame(frame, skip_frames=0, predict_downscaled=True, display_downscaled=False):
     """
     Display a video stream and classify each frame live.
     :return: 
     """
-    downscaled = geom.resize_img(frame, fx=0.4, fy=0.4)
-    # downscaled = frame
+    global downscaled, PREV_LABEL
+    label = PREV_LABEL
+    prepped = geom.fill_img_for_fullscreen(frame)
+    dst = prepped
 
-    ft_vec = get_live_ft_vec(downscaled)
-    # ft_vec = get_live_ft_vec(frame)
-    label = predict_label(clf, ft_vec)
+    if skip_frames == 0 or (skip_frames > 0 and dsp.FRAME_COUNT % skip_frames == 0):
+        if predict_downscaled:
+            downscaled = geom.resize_img(frame, fx=0.4, fy=0.4)
+            ft_vec = get_live_ft_vec(downscaled)
+        else:
+            ft_vec = get_live_ft_vec(frame)
+        label = predict_label(CLF, ft_vec)
+        if skip_frames > 0 and dsp.FRAME_COUNT % skip_frames == 0:
+            PREV_LABEL = label
+        if display_downscaled:
+            prepped = geom.fill_img_for_fullscreen(downscaled)
+            draw_label(prepped, label)
 
-    # draw_label(downscaled, label)
-    draw_label(frame, label)
+    draw_label(prepped, label)
 
-    # dst = downscaled
-    dst = frame
     dsp.show_frame(dst, fullscreen=True)
 
 
