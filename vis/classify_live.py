@@ -36,6 +36,7 @@ def display_predict_on_frame(frame, skip_frames=0, predict_downscaled=True, disp
             draw_label(prepped, label)
 
     draw_label(prepped, label)
+    draw_menu(prepped)
 
     dsp.show_frame(dst, fullscreen=True)
 
@@ -94,3 +95,22 @@ def draw_label(img, label):
 
     cv2.putText(img, text, position, font, font_scale, color_outline, thickness_outline, line_type)
     cv2.putText(img, text, position, font, font_scale, color_inline, thickness_inline, line_type)
+
+
+def draw_menu(img):
+    """
+    Draw the menu. So far this is only a text in the right corner about 'Q for quit'.
+    :param img: image to be drawn on
+    :return: 
+    """
+    width, height = geom.get_img_dims(img)
+
+    font_scale = 0.0012 * height
+    position = (int(0.8 * width), int(0.07 * height))
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    thickness = int(2 * font_scale)
+    line_type = cv2.LINE_AA
+    text = "Press 'Q' to quit"
+    color = (255, 255, 255)
+
+    cv2.putText(img, text, position, font, font_scale, color, thickness, line_type)

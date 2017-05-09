@@ -49,7 +49,7 @@ def test_fill_for_fullscreen(test_image, test_image_rot):
     assert ratio_filled2 == pytest.approx(ratio_screen, 1e-2)
 
 
-@pytest.mark.skip(reason="GUI")
+# @pytest.mark.skip(reason="GUI")
 def test_classify_live():
     cllv.CLF = s.read_classifier(cft.clf_dump)
     dsp.process_video(cft.training_video, cllv.display_predict_on_frame)
@@ -77,4 +77,10 @@ def test_ft_vec_label(test_live_ft_vec):
 def test_draw_label(test_image, test_ft_vec_label):
     img_copy = test_image.copy()
     cllv.draw_label(test_image, test_ft_vec_label)
+    assert hlp.imgs_different(img_copy, test_image)
+
+
+def test_draw_menu(test_image):
+    img_copy = test_image.copy()
+    cllv.draw_menu(test_image)
     assert hlp.imgs_different(img_copy, test_image)
