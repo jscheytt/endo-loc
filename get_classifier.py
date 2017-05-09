@@ -9,11 +9,17 @@ def main(dir_train, dir_eval, clf_filepath, C_value, gamma_value):
     hlp.setup_logging()
 
     global C, gamma
-    if C_value is not None or "":
-        C = float(C_value)
-        do_grid_search = False
-    elif gamma_value is not None or "":
-        gamma = float(gamma_value)
+    if C_value is not (None or ""):
+        try:
+            C = float(C_value)
+        except ValueError:
+            pass
+    if gamma_value is not (None or ""):
+        try:
+            gamma = float(gamma_value)
+        except ValueError:
+            pass
+    if C_value is not (None or "") and gamma_value is not (None or ""):
         do_grid_search = False
     else:
         do_grid_search = True
@@ -22,8 +28,8 @@ def main(dir_train, dir_eval, clf_filepath, C_value, gamma_value):
     if do_grid_search:
         best_parameters = s.get_best_params(X, y)
     else:
-        best_parameters = (C, gamma)
-    classifier = s.get_svclassifier(X, y, best_parameters)
+        best_parameters = {'C': C, 'gamma': gamma}
+    classifier = s.get_svclassifier(X, y, **best_parameters)
     s.write_classifier(classifier, clf_filepath)
 
     X_eval, y_eval = pre.get_multiple_data_and_targets(dir_filepath=dir_eval)
