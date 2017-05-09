@@ -46,8 +46,8 @@ def get_grid_search(X, y):
     :param y: 
     :return: the C_range and gamma_range of the search, then the GridSearch obj itself
     """
-    C_range = np.logspace(-2, 10, 13)
-    gamma_range = np.logspace(-9, 3, 13)
+    C_range = np.logspace(-1, 5, 7)
+    gamma_range = np.logspace(-6, 2, 9)
     param_grid = dict(gamma=gamma_range, C=C_range)
     cv = StratifiedShuffleSplit(n_splits=5, random_state=0)
     grid = GridSearchCV(SVC(class_weight="balanced"), param_grid,
