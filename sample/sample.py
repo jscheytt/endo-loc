@@ -1,5 +1,8 @@
+from typing import Union
+
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.model_selection import cross_val_score
 from sklearn.externals import joblib
 
 from sklearn import svm, metrics
@@ -10,7 +13,7 @@ from sklearn.svm import SVC
 from debug.debug import LogCont
 
 
-def get_svclassifier(X, y, C=1.0, gamma='auto'):
+def get_svclassifier(X=None, y=None, C: float = 1.0, gamma: Union[float, str] = 'auto'):
     """
     Fit a SVM classifier to the given training data.
     :param X: List of feature vectors
@@ -20,9 +23,18 @@ def get_svclassifier(X, y, C=1.0, gamma='auto'):
     :return: The learned classifier
     """
     clf = svm.SVC(C=C, gamma=gamma, class_weight="balanced")
-    with LogCont("Fit SVM to data"):
-        clf.fit(X, y)
+    if X is not None and y is not None:
+        with LogCont("Fit SVM to data"):
+            clf.fit(X, y)
     return clf
+
+
+def get_default_svclassifier():
+    """
+    Create a default classifier without fitting it.
+    :return: 
+    """
+    return get_svclassifier(C=10.0, gamma=10.0)
 
 
 def get_evaluation_report(classifier, X, y):
@@ -36,6 +48,7 @@ def get_evaluation_report(classifier, X, y):
     expected = y
     with LogCont("Predict on test data"):
         predicted = classifier.predict(X)
+    # TODO add confusion matrices
     return metrics.classification_report(expected, predicted)
 
 
@@ -140,3 +153,33 @@ def predict_single_ft_vec(clf, ft_vec):
     """
     value = clf.predict(ft_vec)
     return value
+
+
+def get_crossval_scores(X, y, n_folds=10):
+    """
+    Perform cross validation and get f1 scores.
+    :param X: 
+    :param y: 
+    :param n_folds: number of folds
+    :return: array of scores of all folds
+    """
+    clf = get_default_svclassifier()
+    with LogCont("Calculate cross validation"):
+        scores = cross_val_score(clf, X, y, cv=n_folds, scoring='f1', n_jobs=-1)
+    return scores
+
+
+def get_crossval_evaluation(X, y, n_folds=10, print_scores=False):
+    """
+    Perform cross validation and get evaluation report.
+    :param X: 
+    :param y: 
+    :param n_folds: number of folds
+    :param print_scores: print all scores to stdout 
+    :return: str with scores mean and std. deviation 
+    """
+    scores = get_crossval_scores(X, y, n_folds)
+    if print_scores:
+        print(scores)
+    report = "F1 score: %0.4f (+/- %0.4f)" % (scores.mean(), scores.std() * 2)
+    return report

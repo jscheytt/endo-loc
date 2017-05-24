@@ -4,5 +4,6 @@ tests/res/test_label_list.csv
 tests/res/video_eval.mp4
 tests/res/video_train.mp4
 tests/res/data_targets_test/
+tests/res/svclassifier.pkl
 */__pycache__/
-logs/*
+logs/

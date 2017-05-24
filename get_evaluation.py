@@ -5,28 +5,30 @@ import sample.sample as s
 import helper.helper as hlp
 
 
-def main(feat_train, label_list_train, feat_eval, label_list_eval, do_subsampling):
+def main(dir_train, dir_eval, do_subsampling):
     hlp.setup_logging()
 
-    if feat_eval is None and label_list_eval is None:
-        X, y = pre.get_data_and_targets(feat_train, label_list_train, do_subsampling=do_subsampling)
-        X_train, X_test, y_train, y_test = pre.get_train_test_data_targets(X, y)
-    else:
-        X_train, y_train = pre.get_data_and_targets(feat_train, label_list_train, do_subsampling=do_subsampling)
-        X_test, y_test = pre.get_data_and_targets(feat_eval, label_list_eval)
+    X, y = pre.get_multiple_data_and_targets(dir_filepath=dir_train, do_subsampling=do_subsampling)
+    svc = s.get_svclassifier(X, y)
 
-    svc = s.get_svclassifier(X_train, y_train)
-    evaluation = s.get_evaluation_report(svc, X_test, y_test)
+    if dir_eval is not None:
+        X_eval, y_eval = pre.get_multiple_data_and_targets(dir_filepath=dir_eval)
+        evaluation = s.get_evaluation_report(svc, X_eval, y_eval)
+    else:
+        evaluation = s.get_crossval_evaluation(X, y, print_scores=True)
+
     print(evaluation)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Print evaluation metrics for learning an HSV classifier "
-                                                 "on 2 sets of feature data + targets.")
-    parser.add_argument("feat_train", help="The features file (.xml) for training the classifier")
-    parser.add_argument("label_list_train", help="The label list file (.csv) for training the classifier")
-    parser.add_argument("-fv", "--feat_eval", help="The features file (.xml) for evaluating the classifier")
-    parser.add_argument("-lv", "--label_list_eval", help="The label list file (.csv) for evaluating the classifier")
+                                                 "on 1 or 2 sets of feature data + targets.")
+    parser.add_argument("dir_train", help="Directory containing all feature XMLs and label CSVs for training the "
+                                          "classifier. CSVs need to have the same file name as their corresponding "
+                                          "XML.")
+    parser.add_argument("-de", "--dir_eval", help="Directory containing the feature XML(s) and label CSV(s) for "
+                                                  "evaluating the classifier's performance. CSV(s) must have the "
+                                                  "same file name as their corresponding XML.")
     parser.add_argument("-s", "--subsampling", help="Subsample majority class", action="store_true")
     args = parser.parse_args()
-    main(args.feat_train, args.label_list_train, args.feat_eval, args.label_list_eval, args.subsampling)
+    main(args.dir_train, args.dir_eval, args.subsampling)
