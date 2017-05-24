@@ -1,13 +1,10 @@
 from typing import Union
 
-import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import cross_val_score
+import numpy as np
+import sklearn.metrics as sk_mt
+import sklearn.model_selection as sk_ms
 from sklearn.externals import joblib
-
-from sklearn import svm, metrics
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.svm import SVC
 
 from debug.debug import LogCont
@@ -22,7 +19,7 @@ def get_svclassifier(X=None, y=None, C: float = 1.0, gamma: Union[float, str] = 
     :param gamma: 
     :return: The learned classifier
     """
-    clf = svm.SVC(C=C, gamma=gamma, class_weight="balanced")
+    clf = SVC(C=C, gamma=gamma, class_weight="balanced")
     if X is not None and y is not None:
         with LogCont("Fit SVM to data"):
             clf.fit(X, y)
@@ -49,7 +46,7 @@ def get_evaluation_report(classifier, X, y):
     with LogCont("Predict on test data"):
         predicted = classifier.predict(X)
     # TODO add confusion matrices
-    return metrics.classification_report(expected, predicted)
+    return sk_mt.classification_report(expected, predicted)
 
 
 def get_grid_search(X, y):
@@ -62,9 +59,9 @@ def get_grid_search(X, y):
     C_range = np.logspace(-1, 5, 7)
     gamma_range = np.logspace(-6, 2, 9)
     param_grid = dict(gamma=gamma_range, C=C_range)
-    cv = StratifiedShuffleSplit(n_splits=5, random_state=0)
-    grid = GridSearchCV(SVC(class_weight="balanced"), param_grid,
-                        scoring='f1', n_jobs=-1, cv=cv, error_score=0)
+    cv = sk_ms.StratifiedShuffleSplit(n_splits=5, random_state=0)
+    grid = sk_ms.GridSearchCV(SVC(class_weight="balanced"), param_grid,
+                              scoring='f1', n_jobs=-1, cv=cv, error_score=0)
     with LogCont("Perform grid search"):
         grid.fit(X, y)
         # TODO externalize this to some main method
@@ -165,7 +162,7 @@ def get_crossval_scores(X, y, n_folds=10):
     """
     clf = get_default_svclassifier()
     with LogCont("Calculate cross validation"):
-        scores = cross_val_score(clf, X, y, cv=n_folds, scoring='f1', n_jobs=-1)
+        scores = sk_ms.cross_val_score(clf, X, y, cv=n_folds, scoring='f1', n_jobs=-1)
     return scores
 
 
@@ -183,3 +180,13 @@ def get_crossval_evaluation(X, y, n_folds=10, print_scores=False):
         print(scores)
     report = "F1 score: %0.4f (+/- %0.4f)" % (scores.mean(), scores.std() * 2)
     return report
+
+
+def get_confusion_mat(y_train, y_eval):
+    """
+    Calculate the confusion matrix.
+    :param y_train: 
+    :param y_eval: 
+    :return: array of shape [n_classes, n_classes]
+    """
+    return sk_mt.confusion_matrix(y_train, y_eval)

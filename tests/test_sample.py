@@ -23,6 +23,15 @@ def test_get_evaluation(test_get_svclassifier, eval_data_and_targets):
     assert len(evaluation)
 
 
+def test_get_confusion_matrix(test_get_svclassifier, eval_data_and_targets):
+    svc = test_get_svclassifier
+    X, y = eval_data_and_targets
+    y_pred = svc.predict(X)
+    mats = s.get_confusion_mat(y, y_pred)
+    assert len(mats)
+    assert mats.shape == (2, 2)  # binary classification
+
+
 @pytest.mark.skip(reason="Intensive")
 def test_get_grid_search(test_data_and_targets_subsampled):
     X, y = test_data_and_targets_subsampled
