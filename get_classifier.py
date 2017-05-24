@@ -47,7 +47,9 @@ if __name__ == "__main__":
                                          "the classifier's performance. CSV(s) must have the same file name as their "
                                          "corresponding XML.")
     parser.add_argument("clf_filepath", help="Filepath where the final classifier should be exported to.")
-    parser.add_argument("--C_value", "-c", help="Omit the grid search and directly specify a C value.")
-    parser.add_argument("--gamma", "-g", help="Omit the grid search and directly specify a gamma value.")
+    parser.add_argument("--C_value", "-c", help="Omit the grid search and directly specify a C value.",
+                        default=10.0)
+    parser.add_argument("--gamma", "-g", help="Omit the grid search and directly specify a gamma value.",
+                        default=10.0)
     args = parser.parse_args()
     main(args.dir_train, args.dir_eval, args.clf_filepath, C_value=args.C_value, gamma_value=args.gamma)
