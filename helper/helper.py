@@ -1,5 +1,6 @@
 import logging
 import logging.config
+import os
 
 import cv2
 import yaml
@@ -33,7 +34,6 @@ def file_length(filename):
     :param filename: Path to file
     :return: Byte length of file
     """
-    import os
     f = open(filename)
     return int(os.fstat(f.fileno()).st_size)
 
@@ -85,6 +85,7 @@ def reverse_enum(l):
 
 
 def setup_logging():
+    os.makedirs("logs/", exist_ok=True)  # Create logging directory
     logging.config.dictConfig(yaml.load(open('logging.conf', 'r')))
 
 

@@ -17,7 +17,7 @@ def main(dir_train, dir_eval, do_subsampling):
     else:
         evaluation = s.get_crossval_evaluation(X, y, print_scores=True)
 
-    print(evaluation)
+    hlp.log(evaluation)
 
 
 if __name__ == "__main__":

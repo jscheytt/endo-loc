@@ -8,6 +8,7 @@ from sklearn.externals import joblib
 from sklearn.svm import SVC
 
 from debug.debug import LogCont
+import helper.helper as hlp
 
 
 def get_svclassifier(X=None, y=None, C: float = 1.0, gamma: Union[float, str] = 'auto'):
@@ -65,7 +66,7 @@ def get_grid_search(X, y):
     with LogCont("Perform grid search"):
         grid.fit(X, y)
         # TODO externalize this to some main method
-        print("The best parameters are %s with a score of %0.2f"
+        hlp.log("The best parameters are %s with a score of %0.2f"
               % (grid.best_params_, grid.best_score_))
 
     return C_range, gamma_range, grid
@@ -177,7 +178,7 @@ def get_crossval_evaluation(X, y, n_folds=10, print_scores=False):
     """
     scores = get_crossval_scores(X, y, n_folds)
     if print_scores:
-        print(scores)
+        hlp.log(scores)
     report = "F1 score: %0.4f (+/- %0.4f)" % (scores.mean(), scores.std() * 2)
     return report
 
