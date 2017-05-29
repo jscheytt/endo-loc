@@ -162,8 +162,9 @@ def get_crossval_scores(X, y, n_folds=10):
     :return: array of scores of all folds
     """
     clf = get_default_svclassifier()
+    fold = sk_ms.StratifiedKFold(n_folds)
     with LogCont("Calculate cross validation"):
-        scores = sk_ms.cross_val_score(clf, X, y, cv=n_folds, scoring='f1', n_jobs=-1)
+        scores = sk_ms.cross_val_score(clf, X, y, cv=fold, scoring='f1', n_jobs=-1)
     return scores
 
 
