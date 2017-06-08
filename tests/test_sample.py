@@ -19,8 +19,9 @@ def test_get_svclassifier(test_data_and_targets):
 def test_get_evaluation(test_get_svclassifier, eval_data_and_targets):
     svc = test_get_svclassifier
     X_eval, y_eval = eval_data_and_targets
-    evaluation = s.get_evaluation_report(svc, X_eval, y_eval)
+    evaluation, conf_mat = s.get_evaluation_report(svc, X_eval, y_eval)
     assert len(evaluation)
+    assert conf_mat.shape == (2, 2)
 
 
 def test_get_confusion_matrix(test_get_svclassifier, eval_data_and_targets):

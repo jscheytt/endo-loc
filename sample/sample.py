@@ -41,13 +41,14 @@ def get_evaluation_report(classifier, X, y):
     :param classifier:
     :param X:
     :param y:
-    :return: String containing the evaluation report
+    :return: evaluation report (str), confusion matrix (array)
     """
     expected = y
     with LogCont("Predict on test data"):
         predicted = classifier.predict(X)
-    # TODO add confusion matrices
-    return sk_mt.classification_report(expected, predicted)
+    eval_report = sk_mt.classification_report(expected, predicted)
+    conf_mat = get_confusion_mat(expected, predicted)
+    return eval_report, conf_mat
 
 
 def get_grid_search(X, y):

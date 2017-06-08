@@ -33,7 +33,7 @@ def main(dir_train, dir_eval, clf_filepath, C_value, gamma_value):
     s.write_classifier(classifier, clf_filepath)
 
     X_eval, y_eval = pre.get_multiple_data_and_targets(dir_filepath=dir_eval)
-    validation = s.get_evaluation_report(classifier, X_eval, y_eval)
+    validation, conf_mat = s.get_evaluation_report(classifier, X_eval, y_eval)
     hlp.log(validation)
 
 
