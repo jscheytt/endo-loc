@@ -1,5 +1,8 @@
+import csv
+
 import label_import.label as lb
 import label_import.timestamp as lt
+from debug.debug import LogCont
 
 LINE_PATTERN = r"Dialogue: 0,([0-9.:]*?),([0-9.:]*?),Default,,0,0,0,,([A-Z_]*)"
 
@@ -10,8 +13,9 @@ def get_textfile_as_str(ilabel_file):
     :param ilabel_file: Path to textfile
     :return: Str containing all file contents
     """
-    with open(ilabel_file, 'r') as file:
-        contents = file.read()
+    with LogCont("Read textfile"):
+        with open(ilabel_file, 'r') as file:
+            contents = file.read()
     return contents
 
 
@@ -59,10 +63,11 @@ def get_labels_from_mlstring(file_cont):
     :return: List of ILabel objs
     """
     ilabels = []
-    for line in file_cont.splitlines():
-        ilabel = get_label_from_line(line)
-        if ilabel is not None:
-            ilabels.append(ilabel)
+    with LogCont("Create labels from imported ASS file"):
+        for line in file_cont.splitlines():
+            ilabel = get_label_from_line(line)
+            if ilabel is not None:
+                ilabels.append(ilabel)
     return ilabels
 
 
@@ -83,11 +88,11 @@ def read_label_list(filename):
     :param filename: Path to the CSV file
     :return: 1D list of label values
     """
-    import csv
     import helper.helper as hlp
     label_list = []
-    with open(filename, newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter=hlp.VAL_SEP, quotechar='|')
-        for row in reader:
-            label_list.append(int(row[1]))
+    with LogCont("Read labels from CSV"):
+        with open(filename, newline='') as csvfile:
+            reader = csv.reader(csvfile, delimiter=hlp.VAL_SEP, quotechar='|')
+            for row in reader:
+                label_list.append(int(row[1]))
     return label_list

@@ -23,7 +23,7 @@ def main(labelsfile, featurefile):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Convert a labels file to a CSV file"
+    parser = argparse.ArgumentParser(description="Convert a labels file to a CSV file "
                                                  "containing the HSV histograms of each frame.")
     parser.add_argument("labelsfile", help="The labels file (.ass) to be converted")
     parser.add_argument("featurefile", help="The video feature file (.xml) corresponding to the labels")

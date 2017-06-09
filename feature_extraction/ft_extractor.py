@@ -6,6 +6,7 @@ from lxml import etree
 import feature_extraction.ft_descriptor as fd
 import helper.helper as hlp
 import label_import.timestamp as lt
+from debug.debug import LogCont
 
 CHARSET = "utf-8"
 VIDEO_TAG = "video"
@@ -127,27 +128,33 @@ def get_video_from_xml(filename):
     return video
 
 
-def get_video_params_from_xml(filename):
+def get_video_params_from_xml(filepath):
+    """
+    Retrieve all video information from an XML file.
+    :param filepath:
+    :return:
+    """
     parser = etree.XMLParser(encoding=CHARSET)
-    tree = etree.parse(filename, parser=parser)
+    tree = etree.parse(filepath, parser=parser)
     video_el = tree.getroot()
     frames_els = video_el.getchildren()
     frames = []
     fps = int(video_el.get(FPS_TAG))
     numpx = video_el.get(NUMPX_TAG)
 
-    for vframe_el in frames_els:
-        descriptor_el = vframe_el[0]
-        hists = []
-        for hist_el in descriptor_el:
-            hist = [int(x) for x in hist_el.text.split(hlp.VAL_SEP)]
-            hists.append(hist)
-        descriptor = fd.FeatureDescriptor(hists)
+    with LogCont("Import frames from XML"):
+        for vframe_el in frames_els:
+            descriptor_el = vframe_el[0]
+            hists = []
+            for hist_el in descriptor_el:
+                hist = [int(x) for x in hist_el.text.split(hlp.VAL_SEP)]
+                hists.append(hist)
+            descriptor = fd.FeatureDescriptor(hists)
 
-        timestamp_str = vframe_el.get(TIMESTAMP_TAG)
-        timestamp_obj = lt.Timestamp.from_str(timestamp_str)
-        vframe = fd.VFrame(timestamp=timestamp_obj, descriptor=descriptor)
-        frames.append(vframe)
+            timestamp_str = vframe_el.get(TIMESTAMP_TAG)
+            timestamp_obj = lt.Timestamp.from_str(timestamp_str)
+            vframe = fd.VFrame(timestamp=timestamp_obj, descriptor=descriptor)
+            frames.append(vframe)
 
     return fps, frames, numpx
 

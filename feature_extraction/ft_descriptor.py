@@ -140,8 +140,10 @@ class Video:
         :return:
         """
         import csv
-        with open(filename, 'w', newline='') as csvfile:
-            writer = csv.writer(csvfile, delimiter=hlp.VAL_SEP, quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            self.fill_label_list()
-            for idx, label in enumerate(self.label_list):
-                writer.writerow([self.frames[idx].timestamp.to_str(), label])
+        from debug.debug import LogCont
+        with LogCont("Write label list to CSV file"):
+            with open(filename, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile, delimiter=hlp.VAL_SEP, quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                self.fill_label_list()
+                for idx, label in enumerate(self.label_list):
+                    writer.writerow([self.frames[idx].timestamp.to_str(), label])
