@@ -156,19 +156,20 @@ def get_multiple_data_and_targets(dir_filepath, do_subsampling=False):
     :param do_subsampling: 
     :return: 
     """
-    global X_comb, y_comb
+    X_list = []
+    y_list = []
 
     cwd = os.getcwd()
     os.chdir(dir_filepath)
     for idx, file in enumerate(glob.glob("*.xml")):
         xml = file
         csv = os.path.splitext(file)[0] + ".csv"
-        if idx == 0:  # Initialize
-            X_comb, y_comb = get_data_and_targets(xml, csv, do_subsampling=do_subsampling)
-        else:
-            X_part, y_part = get_data_and_targets(xml, csv, do_subsampling=do_subsampling)
-            X_comb = get_combined_nparrays(X_comb, X_part)
-            y_comb = get_combined_nparrays(y_comb, y_part)
+        X_part, y_part = get_data_and_targets(xml, csv, do_subsampling=do_subsampling)
+        X_list.append(X_part)
+        y_list.append(y_part)
     os.chdir(cwd)
+
+    X_comb = np.concatenate(X_list)
+    y_comb = np.concatenate(y_list)
 
     return X_comb, y_comb
