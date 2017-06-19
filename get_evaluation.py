@@ -4,6 +4,7 @@ import os
 import prep.preprocessor as pre
 import sample.sample as s
 import helper.helper as hlp
+import debug.debug as dbg
 
 
 def main(dir_train_or_clf, dir_eval, do_subsampling):
@@ -21,9 +22,16 @@ def main(dir_train_or_clf, dir_eval, do_subsampling):
         else:  # Or do cross validation
             evaluation = s.get_crossval_evaluation(X, y, print_scores=True)
 
-    if dir_eval is not None:
+    if dir_eval is not None and svc is not None:
         X_eval, y_eval = pre.get_multiple_data_and_targets(dir_filepath=dir_eval)
-        evaluation, conf_mat = s.get_evaluation_report(svc, X_eval, y_eval)
+        predicted = s.get_prediction(X_eval, svc)
+        evaluation, conf_mat = s.get_evaluation_report(svc, X_eval, y_eval, predicted=predicted)
+
+        # Write y_eval and predicted to disk
+        textfile = dir_eval + os.sep + "predicted.txt"
+        eval_labels_file = dir_eval + os.sep + "y_eval.txt"
+        dbg.write_list_to_file(predicted, textfile)
+        dbg.write_list_to_file(y_eval, eval_labels_file)
 
     hlp.log(evaluation)
     if conf_mat is not None:
