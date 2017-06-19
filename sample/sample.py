@@ -35,16 +35,18 @@ def get_default_svclassifier():
     return get_svclassifier(C=10.0, gamma=10.0)
 
 
-def get_evaluation_report(classifier, X, y):
+def get_evaluation_report(classifier, X, y, predicted=None):
     """
     Get an evaluation report on the prediction correctness of the classifier.
     :param classifier:
     :param X:
     :param y:
+    :param predicted: predicted labels on data
     :return: evaluation report (str), confusion matrix (array)
     """
     expected = y
-    predicted = get_prediction(X, classifier)
+    if predicted is None:
+        predicted = get_prediction(X, classifier)
     eval_report = sk_mt.classification_report(expected, predicted)
     conf_mat = get_confusion_mat(expected, predicted)
     return eval_report, conf_mat
