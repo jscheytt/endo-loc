@@ -66,6 +66,18 @@ def plot_histograms_live(filename):
     cv2.destroyAllWindows()
 
 
+def write_list_to_file(l, filename):
+    """
+    Write a list object to a text file
+    :param l: list object
+    :param filename: path to text file
+    :return:
+    """
+    with open(filename, 'w') as textfile:
+        text = '\n'.join(map(str, l))
+        textfile.write(text)
+
+
 class LogCont:
     def __init__(self, message):
         self.message = message

@@ -27,6 +27,7 @@ eval_labels = res_dir + "video_eval.ass"
 eval_label_list = res_dir + "video_eval.csv"
 
 clf_dump = res_dir + "svclassifier.pkl"
+list_export = res_dir + "list.txt"
 
 
 @pytest.fixture(scope="module")

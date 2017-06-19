@@ -4,6 +4,7 @@ import pytest
 
 import debug.debug as dbg
 import feature_extraction.ft_extractor as fx
+import helper.helper as hlp
 import tests.conftest as cft
 
 
@@ -39,3 +40,9 @@ def test_display_video_histogram_hsv():
 def test_log_surr():
     with dbg.LogCont("Do this action"):
         pass
+
+
+def test_write_list_to_file():
+    l = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+    dbg.write_list_to_file(l, cft.list_export)
+    assert hlp.file_length(cft.list_export)
