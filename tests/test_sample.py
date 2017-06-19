@@ -16,6 +16,13 @@ def test_get_svclassifier(test_data_and_targets):
     return svc
 
 
+def test_get_prediction(test_get_svclassifier, eval_data_and_targets):
+    svc = test_get_svclassifier
+    X_eval, y_eval = eval_data_and_targets
+    predicted = s.get_prediction(X_eval, svc)
+    assert len(predicted)
+
+
 def test_get_evaluation(test_get_svclassifier, eval_data_and_targets):
     svc = test_get_svclassifier
     X_eval, y_eval = eval_data_and_targets

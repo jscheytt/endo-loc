@@ -44,11 +44,22 @@ def get_evaluation_report(classifier, X, y):
     :return: evaluation report (str), confusion matrix (array)
     """
     expected = y
-    with LogCont("Predict on test data"):
-        predicted = classifier.predict(X)
+    predicted = get_prediction(X, classifier)
     eval_report = sk_mt.classification_report(expected, predicted)
     conf_mat = get_confusion_mat(expected, predicted)
     return eval_report, conf_mat
+
+
+def get_prediction(X, classifier):
+    """
+    Make classifier predict labels on data.
+    :param X:
+    :param classifier:
+    :return: array of predicted labels
+    """
+    with LogCont("Predict on test data"):
+        predicted = classifier.predict(X)
+    return predicted
 
 
 def get_grid_search(X, y):
@@ -68,7 +79,7 @@ def get_grid_search(X, y):
         grid.fit(X, y)
         # TODO externalize this to some main method
         hlp.log("The best parameters are %s with a score of %0.2f"
-              % (grid.best_params_, grid.best_score_))
+                % (grid.best_params_, grid.best_score_))
 
     return C_range, gamma_range, grid
 
