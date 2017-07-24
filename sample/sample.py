@@ -169,17 +169,45 @@ def predict_single_ft_vec(clf, ft_vec):
 
 def get_crossval_scores(X, y, n_folds=10):
     """
-    Perform cross validation and get f1 scores.
-    :param X: 
-    :param y: 
+    Perform cross validation and get f1 scores of both classes.
+    :param X:
+    :param y:
     :param n_folds: number of folds
-    :return: array of scores of all folds
+    :return: array of scores of all classes of all folds,
+    array of floats with shape (n_folds, 2)
     """
     clf = get_default_svclassifier()
     fold = sk_ms.StratifiedKFold(n_folds)
     with LogCont("Calculate cross validation"):
-        scores = sk_ms.cross_val_score(clf, X, y, cv=fold, scoring='f1')
+        y_pred = sk_ms.cross_val_predict(clf, X, y, cv=fold)
+        scores = get_binary_f1s(y, y_pred, n_folds)
     return scores
+
+
+def get_binary_f1s(y, y_pred, n_folds):
+    """
+    Evaluate the f1 score for both classes on every partition.
+    :param y:
+    :param y_pred:
+    :param n_folds: number of folds
+    :return: scores of both classes, array of floats with shape (2, n_folds)
+    """
+    y_true = np.array(y)
+    y_true_inv = np.invert(y_true) + 2
+    y_pred_inv = np.invert(y_pred) + 2
+
+    folds_y_true = np.array_split(y_true, n_folds)
+    folds_y_pred = np.array_split(y_pred, n_folds)
+    folds_y_true_inv = np.array_split(y_true_inv, n_folds)
+    folds_y_pred_inv = np.array_split(y_pred_inv, n_folds)
+
+    def scorer(folds):
+        return sk_mt.f1_score(folds[0], folds[1])
+
+    scores_class0 = list(map(scorer, zip(folds_y_true, folds_y_pred)))
+    scores_class1 = list(map(scorer, zip(folds_y_true_inv, folds_y_pred_inv)))
+
+    return [scores_class0, scores_class1]
 
 
 def get_crossval_evaluation(X, y, n_folds=10, print_scores=False):
@@ -194,7 +222,10 @@ def get_crossval_evaluation(X, y, n_folds=10, print_scores=False):
     scores = get_crossval_scores(X, y, n_folds)
     if print_scores:
         hlp.log(scores)
-    report = "F1 score: %0.4f (+/- %0.4f)" % (scores.mean(), scores.std() * 2)
+    report = ""
+    for idx, score in enumerate(scores):
+        pattern = "F1 score class " + str(idx) + ": %0.4f (+/- %0.4f)\n"
+        report += pattern % (np.mean(score), np.std(score))
     return report
 
 

@@ -85,4 +85,5 @@ def test_get_crossval_evaluation(test_data_and_targets):
     X, y = test_data_and_targets
     n_folds = 2
     evaluation = s.get_crossval_evaluation(X, y, n_folds=n_folds)
-    assert len(evaluation) == 29  # fixed length of str
+    assert len(evaluation)
+    assert evaluation.count('\n') == 2
