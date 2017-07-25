@@ -167,34 +167,18 @@ def predict_single_ft_vec(clf, ft_vec):
     return value
 
 
-def get_crossval_scores(X, y, n_folds=10):
+def calc_scores_on_both_classes(y, y_pred, n_folds, metric):
     """
-    Perform cross validation and get f1 scores of both classes.
-    :param X:
+    Evaluate a score defined by metric for both classes on every partition.
     :param y:
+    :param y_pred: predicted labels
     :param n_folds: number of folds
-    :return: array of scores of all classes of all folds,
-    array of floats with shape (n_folds, 2)
-    """
-    clf = get_default_svclassifier()
-    fold = sk_ms.StratifiedKFold(n_folds)
-    with LogCont("Calculate cross validation"):
-        y_pred = sk_ms.cross_val_predict(clf, X, y, cv=fold)
-        scores = get_binary_f1s(y, y_pred, n_folds)
-    return scores
-
-
-def get_binary_f1s(y, y_pred, n_folds):
-    """
-    Evaluate the f1 score for both classes on every partition.
-    :param y:
-    :param y_pred:
-    :param n_folds: number of folds
+    :param metric: metric to be assessed over the predictions
     :return: scores of both classes, array of floats with shape (2, n_folds)
     """
     y_true = np.array(y)
-    y_true_inv = np.invert(y_true) + 2
-    y_pred_inv = np.invert(y_pred) + 2
+    y_true_inv = 1 - y_true
+    y_pred_inv = 1 - y_pred
 
     folds_y_true = np.array_split(y_true, n_folds)
     folds_y_pred = np.array_split(y_pred, n_folds)
@@ -202,7 +186,7 @@ def get_binary_f1s(y, y_pred, n_folds):
     folds_y_pred_inv = np.array_split(y_pred_inv, n_folds)
 
     def scorer(folds):
-        return sk_mt.f1_score(folds[0], folds[1])
+        return metric(folds[0], folds[1])
 
     scores_class0 = list(map(scorer, zip(folds_y_true, folds_y_pred)))
     scores_class1 = list(map(scorer, zip(folds_y_true_inv, folds_y_pred_inv)))
@@ -213,20 +197,26 @@ def get_binary_f1s(y, y_pred, n_folds):
 def get_crossval_evaluation(X, y, n_folds=10, print_scores=False):
     """
     Perform cross validation and get evaluation report.
-    :param X: 
-    :param y: 
+    :param X:
+    :param y:
     :param n_folds: number of folds
-    :param print_scores: print all scores to stdout 
-    :return: str with scores mean and std. deviation 
+    :param print_scores: print all scores to stdout
+    :return: str with scores mean and std. deviation
+    and the predicted labels
     """
-    scores = get_crossval_scores(X, y, n_folds)
+    clf = get_default_svclassifier()
+    fold = sk_ms.StratifiedKFold(n_folds)
+    with LogCont("Calculate cross validation"):
+        y_pred = sk_ms.cross_val_predict(clf, X, y, cv=fold)
+    scores = calc_scores_on_both_classes(y, y_pred, n_folds,
+                                         lambda x1, x2: sk_mt.f1_score(x1, x2, average="binary"))
     if print_scores:
         hlp.log(scores)
     report = ""
     for idx, score in enumerate(scores):
         pattern = "F1 score class " + str(idx) + ": %0.4f (+/- %0.4f)\n"
         report += pattern % (np.mean(score), np.std(score))
-    return report
+    return report, y_pred
 
 
 def get_confusion_mat(y_train, y_eval):

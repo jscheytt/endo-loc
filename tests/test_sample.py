@@ -73,17 +73,10 @@ def test_import_classifier():
     assert svc.n_support_[0] > 0
 
 
-@pytest.mark.skip(reason="Contained")
-def test_get_crossval_scores(test_data_and_targets):
-    X, y = test_data_and_targets
-    n_folds = 2
-    scores = s.get_crossval_scores(X, y, n_folds=n_folds)
-    assert len(scores) == n_folds
-
-
 def test_get_crossval_evaluation(test_data_and_targets):
     X, y = test_data_and_targets
     n_folds = 2
-    evaluation = s.get_crossval_evaluation(X, y, n_folds=n_folds)
+    evaluation, y_pred = s.get_crossval_evaluation(X, y, n_folds=n_folds)
     assert len(evaluation)
     assert evaluation.count('\n') == 2
+    assert len(y_pred)
