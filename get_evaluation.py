@@ -7,7 +7,7 @@ import helper.helper as hlp
 import debug.debug as dbg
 
 
-def main(dir_train_or_clf, dir_eval, do_subsampling):
+def main(dir_train_or_clf, dir_eval, do_subsampling, dir_y):
     hlp.setup_logging()
     svc = None
     evaluation = "Please provide at least one directory with files!"
@@ -20,7 +20,13 @@ def main(dir_train_or_clf, dir_eval, do_subsampling):
         if dir_eval is not None:  # Learn and evaluate it
             svc = s.get_svclassifier(X, y)
         else:  # Or do cross validation
-            evaluation = s.get_crossval_evaluation(X, y, print_scores=True)
+            evaluation, y_pred = s.get_crossval_evaluation(X, y, print_scores=True)
+            if dir_y is not None:
+                # Write y_true and y_pred to disk
+                textfile = dir_y + os.sep + "predicted.txt"
+                eval_labels_file = dir_y + os.sep + "y_eval.txt"
+                dbg.write_list_to_file(y_pred, textfile)
+                dbg.write_list_to_file(y, eval_labels_file)
 
     if dir_eval is not None and svc is not None:
         X_eval, y_eval = pre.get_multiple_data_and_targets(dir_filepath=dir_eval)
@@ -50,6 +56,8 @@ if __name__ == "__main__":
                              "evaluating the classifier's performance. CSV(s) must have the "
                              "same file name as their corresponding XML. Skip if you want to "
                              "perform cross validation.")
+    parser.add_argument("-dy", "--dir_y",
+                        help="Directory for storing the true and predicted target values.")
     parser.add_argument("-s", "--subsampling", help="Subsample majority class", action="store_true")
     args = parser.parse_args()
-    main(args.dir_train_or_clf, args.dir_eval, args.subsampling)
+    main(args.dir_train_or_clf, args.dir_eval, args.subsampling, args.dir_y)
