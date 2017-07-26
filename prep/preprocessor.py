@@ -149,12 +149,13 @@ def get_combined_nparrays(*args):
     return np.concatenate(args)
 
 
-def get_multiple_data_and_targets(dir_filepath, do_subsampling=False):
+def get_multiple_data_and_targets(dir_filepath, do_subsampling=False, do_concat=True):
     """
     Get multiple datas and targets's from a directory.
-    :param dir_filepath: 
-    :param do_subsampling: 
-    :return: 
+    :param dir_filepath:
+    :param do_subsampling:
+    :param do_concat: concatenate all datas and all targets into one array respectively
+    :return:
     """
     X_list = []
     y_list = []
@@ -169,7 +170,11 @@ def get_multiple_data_and_targets(dir_filepath, do_subsampling=False):
         y_list.append(y_part)
     os.chdir(cwd)
 
-    X_comb = np.concatenate(X_list)
-    y_comb = np.concatenate(y_list)
+    if do_concat:
+        X_multi = np.concatenate(X_list)
+        y_multi = np.concatenate(y_list)
+    else:
+        X_multi = X_list
+        y_multi = y_list
 
-    return X_comb, y_comb
+    return X_multi, y_multi
