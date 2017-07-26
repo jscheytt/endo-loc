@@ -241,11 +241,11 @@ def crossval_predict_files_folds(clf, X_list, y_list, do_subsampling=True):
         # Create selection
         X_sel = X_list[:idx] + X_list[idx + 1:]
         y_sel = y_list[:idx] + y_list[idx + 1:]
+        if do_subsampling:  # Perform subsampling
+            pre.balance_class_sizes(X_sel, y_sel)
         # Concatenate
         X_sel_comb = np.concatenate(X_sel)
         y_sel_comb = np.concatenate(y_sel)
-        if do_subsampling:  # Perform subsampling
-            pre.balance_class_sizes(X_sel_comb, y_sel_comb)
 
         clf.fit(X_sel_comb, y_sel_comb)
         y_pred_eval = get_prediction(X_eval, clf)
