@@ -1,3 +1,5 @@
+import os
+
 import cv2
 from matplotlib import pyplot as plt
 import logging
@@ -76,6 +78,18 @@ def write_list_to_file(l, filename):
     with open(filename, 'w') as textfile:
         text = '\n'.join(map(str, l))
         textfile.write(text)
+
+
+def write_list_to_dir(directory, y, filename):
+    """
+    Convenience method for writing a file to a directory.
+    :param directory:
+    :param y: list
+    :param filename:
+    :return:
+    """
+    textfile = directory + os.sep + filename
+    write_list_to_file(y, textfile)
 
 
 class LogCont:
