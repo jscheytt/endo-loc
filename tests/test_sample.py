@@ -73,10 +73,21 @@ def test_import_classifier():
     assert svc.n_support_[0] > 0
 
 
+# @pytest.mark.skip(reason="Temporary")
 def test_get_crossval_evaluation(test_data_and_targets):
     X, y = test_data_and_targets
     n_folds = 2
     evaluation, y_pred = s.get_crossval_evaluation(X, y, n_folds=n_folds)
+    assert len(evaluation)
+    assert evaluation.count('\n') == 2
+    assert len(y_pred)
+
+
+@pytest.mark.skip(reason="Hard-coded filepaths in fixture")
+def test_crossval_predict_files_folds(test_get_multiple_data_and_targets):
+    X_list, y_list = test_get_multiple_data_and_targets
+    clf = s.get_svclassifier(C=10.0, gamma=10.0)
+    evaluation, y_pred = s.get_crossval_evaluation(X_list, y_list, clf=clf, files_as_folds=True, do_subsampling=True)
     assert len(evaluation)
     assert evaluation.count('\n') == 2
     assert len(y_pred)

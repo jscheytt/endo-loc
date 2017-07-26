@@ -66,3 +66,13 @@ def eval_data_and_targets():
     assert len(X)
     assert len(y)
     return X, y
+
+
+# @pytest.mark.skip(reason="Hard-coded filepaths")
+@pytest.fixture(scope='module')
+def test_get_multiple_data_and_targets():
+    X_list, y_list = pre.get_multiple_data_and_targets(data_targets_directory, do_subsampling=True, do_concat=False)
+    assert len(X_list) > 1
+    assert len(y_list) > 1
+    assert len(X_list) == len(y_list)
+    return X_list, y_list

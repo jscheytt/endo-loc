@@ -9,6 +9,7 @@ from sklearn.svm import SVC
 
 from debug.debug import LogCont
 import helper.helper as hlp
+import prep.preprocessor as pre
 
 
 def get_svclassifier(X=None, y=None, C: float = 1.0, gamma: Union[float, str] = 'auto'):
@@ -25,14 +26,6 @@ def get_svclassifier(X=None, y=None, C: float = 1.0, gamma: Union[float, str] = 
         with LogCont("Fit SVM to data"):
             clf.fit(X, y)
     return clf
-
-
-def get_default_svclassifier():
-    """
-    Create a default classifier without fitting it.
-    :return: 
-    """
-    return get_svclassifier(C=10.0, gamma=10.0)
 
 
 def get_evaluation_report(classifier, X, y, predicted=None):
@@ -178,6 +171,7 @@ def calc_scores_on_both_classes(y, y_pred, n_folds, metric):
     """
     y_true = np.array(y)
     y_true_inv = 1 - y_true
+    y_pred = np.array(y_pred)
     y_pred_inv = 1 - y_pred
 
     folds_y_true = np.array_split(y_true, n_folds)
@@ -194,29 +188,69 @@ def calc_scores_on_both_classes(y, y_pred, n_folds, metric):
     return [scores_class0, scores_class1]
 
 
-def get_crossval_evaluation(X, y, n_folds=10, print_scores=False):
+def get_crossval_evaluation(X, y, n_folds=10, print_scores=False, clf=None, files_as_folds=False,
+                            do_subsampling=True):
     """
     Perform cross validation and get evaluation report.
     :param X:
     :param y:
     :param n_folds: number of folds
     :param print_scores: print all scores to stdout
-    :return: str with scores mean and std. deviation
+    :param clf: classifier object for learning
+    :param files_as_folds: get partitions from files
+    :param do_subsampling: perform subsampling in case of files as folds
+    :return: str with scores mean and std. deviation,
     and the predicted labels
     """
-    clf = get_default_svclassifier()
-    fold = sk_ms.StratifiedKFold(n_folds)
+    if clf is None:
+        clf = get_svclassifier(X, y)
+
     with LogCont("Calculate cross validation"):
-        y_pred = sk_ms.cross_val_predict(clf, X, y, cv=fold)
+        if not files_as_folds and n_folds is not None:
+            fold = sk_ms.StratifiedKFold(n_folds)
+            y_pred = sk_ms.cross_val_predict(clf, X, y, cv=fold)
+        else:
+            y_pred = crossval_predict_files_folds(clf, X, y, do_subsampling=do_subsampling)
+            y = np.concatenate(y)
+
     scores = calc_scores_on_both_classes(y, y_pred, n_folds,
                                          lambda x1, x2: sk_mt.f1_score(x1, x2, average="binary"))
     if print_scores:
         hlp.log(scores)
+
     report = ""
     for idx, score in enumerate(scores):
         pattern = "F1 score class " + str(idx) + ": %0.4f (+/- %0.4f)\n"
         report += pattern % (np.mean(score), np.std(score))
+
     return report, y_pred
+
+
+def crossval_predict_files_folds(clf, X_list, y_list, do_subsampling=True):
+    """
+    Perform cross validation on lists of data and targets.
+    Use the files / list entries as folds.
+    :param clf: classifier object
+    :param X_list: list of data arrays
+    :param y_list: list of target arrays
+    :param do_subsampling: perform subsampling on selection (not on eval data)
+    :return:
+    """
+    y_pred = []
+    for idx, X_eval in hlp.reverse_enum(X_list):
+        # Create selection
+        X_sel = X_list[:idx] + X_list[idx + 1:]
+        y_sel = y_list[:idx] + y_list[idx + 1:]
+        # Concatenate
+        X_sel_comb = np.concatenate(X_sel)
+        y_sel_comb = np.concatenate(y_sel)
+        if do_subsampling:  # Perform subsampling
+            pre.balance_class_sizes(X_sel_comb, y_sel_comb)
+
+        clf.fit(X_sel_comb, y_sel_comb)
+        y_pred_eval = get_prediction(X_eval, clf)
+        y_pred += list(y_pred_eval)
+    return y_pred
 
 
 def get_confusion_mat(y_train, y_eval):

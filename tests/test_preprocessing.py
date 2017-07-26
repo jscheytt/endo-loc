@@ -89,13 +89,8 @@ def test_get_combined_data_and_targets(test_data_and_targets, eval_data_and_targ
 
 
 @pytest.mark.skip(reason="Hard-coded filepaths")
-def test_get_multiple_data_and_targets():
+def test_get_multiple_data_and_targets_concat():
     X_comb, y_comb = pre.get_multiple_data_and_targets(cft.data_targets_directory, do_subsampling=True)
     assert len(X_comb)
     assert len(y_comb)
     assert len(X_comb) == len(y_comb)
-
-    X_list, y_list = pre.get_multiple_data_and_targets(cft.data_targets_directory, do_subsampling=True, do_concat=False)
-    assert len(X_list) > 1
-    assert len(y_list) > 1
-    assert len(X_list) == len(y_list)
