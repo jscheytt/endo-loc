@@ -112,10 +112,9 @@ def get_indices_of_classes(X, y):
 
 def balance_class_sizes(X, y):
     """
-    Balance classes for binary classification.
+    Balance classes for binary classification. Perform in-place manipulation of array.
     :param X: list of feature vectors
     :param y: class labels (0 and 1)
-    # :return: 2 balanced classes
     """
     with LogCont("Subsample majority class"):
         indices_of_classes = get_indices_of_classes(X, y)
