@@ -190,14 +190,12 @@ def calc_scores_on_both_classes(y, y_pred, n_folds=10, metric=sk_mt.f1_score):
     return [scores_class0, scores_class1]
 
 
-def get_crossval_evaluation(X, y, n_folds=10, print_scores=False, clf=None, files_as_folds=False,
-                            do_subsampling=True):
+def get_crossval_scores_prediction(X, y, n_folds=10, clf=None, files_as_folds=False, do_subsampling=True):
     """
     Perform cross validation and get evaluation report.
     :param X:
     :param y:
     :param n_folds: number of folds
-    :param print_scores: print all scores to stdout
     :param clf: classifier object for learning
     :param files_as_folds: get partitions from files
     :param do_subsampling: perform subsampling in case of files as folds
@@ -216,15 +214,20 @@ def get_crossval_evaluation(X, y, n_folds=10, print_scores=False, clf=None, file
         else:
             y_pred, scores = crossval_predict_files_folds(clf, X, y, do_subsampling=do_subsampling, metric=scorer)
 
-    if print_scores:
-        hlp.log(scores)
+    return scores, y_pred
 
+
+def get_eval_report(scores):
+    """
+    Get an evaluation report from lists of F1 scores.
+    :param scores:
+    :return:
+    """
     report = ""
     for idx, score in enumerate(scores):
         pattern = "F1 score class " + str(idx) + ": %0.4f (+/- %0.4f)\n"
         report += pattern % (np.mean(score), np.std(score))
-
-    return report, y_pred
+    return report
 
 
 def crossval_predict_files_folds(clf, X_list, y_list, do_subsampling=True, metric=None):
@@ -259,8 +262,8 @@ def crossval_predict_files_folds(clf, X_list, y_list, do_subsampling=True, metri
         y_pred += list(y_pred_eval)
         # Evaluate prediction
         scores_both_classes = calc_scores_on_both_classes(y_list[idx], y_pred_eval, 1, metric=metric)
-        scores_class0 += scores_both_classes[0]
-        scores_class1 += scores_both_classes[1]
+        scores_class0.append(scores_both_classes[0])
+        scores_class1.append(scores_both_classes[1])
     scores = [scores_class0, scores_class1]
     return y_pred, scores
 

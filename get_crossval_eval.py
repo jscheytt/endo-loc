@@ -24,19 +24,19 @@ def main(dir_train, C, gamma, number_partitions, do_subsampling, write_labels):
     if not do_subsampling:
         early_subsampling = late_subsampling = False
 
-    X, y = pre.get_multiple_data_and_targets(dir_filepath=dir_train,do_subsampling=early_subsampling,
+    X, y = pre.get_multiple_data_and_targets(dir_filepath=dir_train, do_subsampling=early_subsampling,
                                              do_concat=do_concat)
     clf = s.get_svclassifier(C=C, gamma=gamma)
-    evaluation, y_pred = s.get_crossval_evaluation(X, y, n_folds=number_partitions, print_scores=True, clf=clf,
-                                                   files_as_folds=partitions_from_files,
-                                                   do_subsampling=late_subsampling)
+    scores, y_pred = s.get_crossval_scores_prediction(X, y, n_folds=number_partitions, clf=clf,
+                                                      files_as_folds=partitions_from_files, do_subsampling=late_subsampling)
+    evaluation = s.get_eval_report(scores)
+    hlp.log(scores)
+    hlp.log(evaluation)
 
     if write_labels:
         dbg.write_list_to_dir(dir_train, y_pred, "y_pred.txt")
         if do_concat:
             dbg.write_list_to_dir(dir_train, y, "y_true.txt")
-
-    hlp.log(evaluation)
 
 
 if __name__ == "__main__":
