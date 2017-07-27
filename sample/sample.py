@@ -160,12 +160,12 @@ def predict_single_ft_vec(clf, ft_vec):
     return value
 
 
-def calc_scores_on_both_classes(y, y_pred, n_folds, metric):
+def calc_scores_on_both_classes(y, y_pred, n_folds=10, metric=sk_mt.f1_score):
     """
     Evaluate a score defined by metric for both classes on every partition.
     :param y:
     :param y_pred: predicted labels
-    :param n_folds: number of folds
+    :param n_folds: number of folds. if <=1 then just calculate the score for each class on the whole sample
     :param metric: metric to be assessed over the predictions
     :return: scores of both classes, array of floats with shape (2, n_folds)
     """
@@ -174,16 +174,18 @@ def calc_scores_on_both_classes(y, y_pred, n_folds, metric):
     y_pred = np.array(y_pred)
     y_pred_inv = 1 - y_pred
 
-    folds_y_true = np.array_split(y_true, n_folds)
-    folds_y_pred = np.array_split(y_pred, n_folds)
-    folds_y_true_inv = np.array_split(y_true_inv, n_folds)
-    folds_y_pred_inv = np.array_split(y_pred_inv, n_folds)
+    scorer = lambda folds: metric(folds[0], folds[1])
 
-    def scorer(folds):
-        return metric(folds[0], folds[1])
-
-    scores_class0 = list(map(scorer, zip(folds_y_true, folds_y_pred)))
-    scores_class1 = list(map(scorer, zip(folds_y_true_inv, folds_y_pred_inv)))
+    if n_folds > 1:
+        folds_y_true = np.array_split(y_true, n_folds)
+        folds_y_pred = np.array_split(y_pred, n_folds)
+        folds_y_true_inv = np.array_split(y_true_inv, n_folds)
+        folds_y_pred_inv = np.array_split(y_pred_inv, n_folds)
+        scores_class0 = list(map(scorer, zip(folds_y_true, folds_y_pred)))
+        scores_class1 = list(map(scorer, zip(folds_y_true_inv, folds_y_pred_inv)))
+    else:
+        scores_class0 = scorer((y_true, y_pred))
+        scores_class1 = scorer((y_true_inv, y_pred_inv))
 
     return [scores_class0, scores_class1]
 
@@ -202,6 +204,7 @@ def get_crossval_evaluation(X, y, n_folds=10, print_scores=False, clf=None, file
     :return: str with scores mean and std. deviation,
     and the predicted labels
     """
+    scorer = lambda x1, x2: sk_mt.f1_score(x1, x2, average="binary")
     if clf is None:
         clf = get_svclassifier(X, y)
 
@@ -209,12 +212,10 @@ def get_crossval_evaluation(X, y, n_folds=10, print_scores=False, clf=None, file
         if not files_as_folds and n_folds is not None:
             fold = sk_ms.StratifiedKFold(n_folds)
             y_pred = sk_ms.cross_val_predict(clf, X, y, cv=fold)
+            scores = calc_scores_on_both_classes(y, y_pred, n_folds, scorer)
         else:
-            y_pred = crossval_predict_files_folds(clf, X, y, do_subsampling=do_subsampling)
-            y = np.concatenate(y)
+            y_pred, scores = crossval_predict_files_folds(clf, X, y, do_subsampling=do_subsampling, metric=scorer)
 
-    scores = calc_scores_on_both_classes(y, y_pred, n_folds,
-                                         lambda x1, x2: sk_mt.f1_score(x1, x2, average="binary"))
     if print_scores:
         hlp.log(scores)
 
@@ -226,7 +227,7 @@ def get_crossval_evaluation(X, y, n_folds=10, print_scores=False, clf=None, file
     return report, y_pred
 
 
-def crossval_predict_files_folds(clf, X_list, y_list, do_subsampling=True):
+def crossval_predict_files_folds(clf, X_list, y_list, do_subsampling=True, metric=None):
     """
     Perform cross validation on lists of data and targets.
     Use the files / list entries as folds.
@@ -237,6 +238,8 @@ def crossval_predict_files_folds(clf, X_list, y_list, do_subsampling=True):
     :return:
     """
     y_pred = []
+    scores_class0 = []
+    scores_class1 = []
     for idx, X_eval in hlp.reverse_enum(X_list):
         # Create selection
         X_sel = X_list[:idx] + X_list[idx + 1:]
@@ -245,14 +248,21 @@ def crossval_predict_files_folds(clf, X_list, y_list, do_subsampling=True):
         X_sel_comb = np.concatenate(X_sel)
         y_sel_comb = np.concatenate(y_sel)
         if do_subsampling:  # Perform subsampling
-            X_sel_comb_list = list(X_sel_comb)
-            y_sel_comb_list = list(y_sel_comb)
-            pre.balance_class_sizes(X_sel_comb_list, y_sel_comb_list)
-
-        clf.fit(X_sel_comb, y_sel_comb)
+            X_sel_comb = list(X_sel_comb)
+            y_sel_comb = list(y_sel_comb)
+            pre.balance_class_sizes(X_sel_comb, y_sel_comb)
+        # Learn
+        with LogCont("Learn classifier on selection"):
+            clf.fit(X_sel_comb, y_sel_comb)
+        # Predict
         y_pred_eval = get_prediction(X_eval, clf)
         y_pred += list(y_pred_eval)
-    return y_pred
+        # Evaluate prediction
+        scores_both_classes = calc_scores_on_both_classes(y_list[idx], y_pred_eval, 1, metric=metric)
+        scores_class0 += scores_both_classes[0]
+        scores_class1 += scores_both_classes[1]
+    scores = [scores_class0, scores_class1]
+    return y_pred, scores
 
 
 def get_confusion_mat(y_train, y_eval):
