@@ -38,6 +38,25 @@ def test_get_descriptor_vector(test_hists):
     assert len(vector) == total_length
 
 
+def test_get_reduced_descriptor(test_hists, test_image):
+    hsv = test_hists
+    h = hsv[0]
+    s = hsv[1]
+    v = hsv[2]
+    d_h = fd.FeatureDescriptor(test_image, s=False, v=False)
+    assert len(d_h.get_vector()) == len(h)
+    d_hs = fd.FeatureDescriptor(test_image, v=False)
+    assert len(d_hs.get_vector()) == len(h) + len(s)
+    d_hsv = fd.FeatureDescriptor(test_image)
+    assert len(d_hsv.get_vector()) == len(h) + len(s) + len(v)
+    d_s = fd.FeatureDescriptor(test_image, h=False, v=False)
+    assert len(d_s.get_vector()) == len(s)
+    d_sv = fd.FeatureDescriptor(test_image, h=False)
+    assert len(d_sv.get_vector()) == len(s) + len(v)
+    d_v = fd.FeatureDescriptor(test_image, h=False, s=False)
+    assert len(d_v.get_vector()) == len(v)
+
+
 def test_get_frame_as_xml(test_hists):
     timestamp = lt.Timestamp.from_str("00:41:36.96")
     frame_1 = fd.VFrame(timestamp, fd.FeatureDescriptor(test_hists))
@@ -47,16 +66,42 @@ def test_get_frame_as_xml(test_hists):
     assert not hlp.xml_elements_equal(frame_1_xml, frame_2_xml)
 
 
-@pytest.mark.skip(reason="Already contained in test_write_video_xml")
-def test_get_video_as_xml():
-    video_xml = fx.get_xml_from_videofile(cft.example_vid)
-    assert len(video_xml)
+@pytest.fixture()
+def test_get_video_as_xml(test_hists):
+    hsv = test_hists
+    h = hsv[0]
+    s = hsv[1]
+    v = hsv[2]
+
+    vd_h = fx.get_xml_from_videofile(cft.example_vid, s=False, v=False)
+    assert len(vd_h[0][0]) == 1
+    assert len(vd_h[0][0][0].text.split(";")) == len(h)
+    vd_hs = fx.get_xml_from_videofile(cft.example_vid, v=False)
+    assert len(vd_hs[0][0]) == 2
+    assert len(vd_hs[0][0][0].text.split(";")) == len(h)
+    assert len(vd_hs[0][0][1].text.split(";")) == len(s)
+    vd_hsv = fx.get_xml_from_videofile(cft.example_vid)
+    assert len(vd_hsv[0][0]) == 3
+    assert len(vd_hsv[0][0][0].text.split(";")) == len(h)
+    assert len(vd_hsv[0][0][1].text.split(";")) == len(s)
+    assert len(vd_hsv[0][0][2].text.split(";")) == len(v)
+    vd_s = fx.get_xml_from_videofile(cft.example_vid, h=False, v=False)
+    assert len(vd_s[0][0]) == 1
+    assert len(vd_s[0][0][0].text.split(";")) == len(s)
+    vd_sv = fx.get_xml_from_videofile(cft.example_vid, h=False)
+    assert len(vd_sv[0][0]) == 2
+    assert len(vd_sv[0][0][0].text.split(";")) == len(s)
+    assert len(vd_sv[0][0][1].text.split(";")) == len(v)
+    vd_v = fx.get_xml_from_videofile(cft.example_vid, h=False, s=False)
+    assert len(vd_v[0][0]) == 1
+    assert len(vd_v[0][0][0].text.split(";")) == len(v)
+
+    assert len(vd_hsv)
+    return vd_hsv
 
 
-def test_write_video_xml():
-    video_xml = fx.get_xml_from_videofile(cft.example_vid)
-    assert len(video_xml)
-    fx.write_video_to_xml(video_xml, cft.test_video_xml_filename)
+def test_write_video_xml(test_get_video_as_xml):
+    fx.write_video_to_xml(test_get_video_as_xml, cft.test_video_xml_filename)
     assert hlp.file_length(cft.test_video_xml_filename)
 
 

@@ -6,15 +6,19 @@ class FeatureDescriptor:
     A feature descriptor containing the 3 histogram channels as a list.
     """
 
-    def __init__(self, hists_or_img):
+    def __init__(self, hists_or_img, h=True, s=True, v=True):
         if isinstance(hists_or_img, list):
             self.hists = hists_or_img
         else:
             import feature_extraction.ft_extractor as fx
-            self.hists = fx.get_histograms_hsv(hists_or_img)
+            self.hists = fx.get_histograms_hsv(hists_or_img, h, s, v)
 
     def get_vector(self):
-        return self.hists[0] + self.hists[1] + self.hists[2]
+        vector = []
+        for l in self.hists:
+            if l is not None and len(l):
+                vector += l
+        return vector
 
 
 class VFrame:

@@ -12,22 +12,30 @@ CLF = None
 PREV_LABEL = None
 
 
-def display_predict_on_frame(frame, skip_frames=0, predict_downscaled=True, display_downscaled=False):
+def display_predict_on_frame(frame, skip_frames=0, predict_downscaled=True, display_downscaled=False,
+                             h_c=True, s_c=True, v_c=True):
     """
     Display a video stream and classify each frame live.
+    :param frame:
+    :param skip_frames:
+    :param predict_downscaled: predict on a downscaled version of the frame
+    :param display_downscaled: display a downscaled version of the frame
+    :param h_c: predict on hue channel
+    :param s_c: predict on saturation channel
+    :param v_c: predict on value channel
     :return: 
     """
-    global downscaled, PREV_LABEL
+    global PREV_LABEL
     label = PREV_LABEL
     prepped = geom.fill_img_for_fullscreen(frame)
     dst = prepped
 
     if skip_frames == 0 or (skip_frames > 0 and dsp.FRAME_COUNT % skip_frames == 0):
+        downscaled = None
         if predict_downscaled:
             downscaled = geom.resize_img(frame, fx=0.4, fy=0.4)
-            ft_vec = get_live_ft_vec(downscaled)
-        else:
-            ft_vec = get_live_ft_vec(frame)
+            frame = downscaled
+        ft_vec = get_live_ft_vec(frame, h_c=h_c, s_c=s_c, v_c=v_c)
         label = predict_label(CLF, ft_vec)
         if skip_frames > 0 and dsp.FRAME_COUNT % skip_frames == 0:
             PREV_LABEL = label
@@ -41,14 +49,17 @@ def display_predict_on_frame(frame, skip_frames=0, predict_downscaled=True, disp
     dsp.show_frame(dst, fullscreen=True)
 
 
-def get_live_ft_vec(img):
+def get_live_ft_vec(img, h_c=True, s_c=True, v_c=True):
     """
     Directly get feature vector of an image.
-    :param img: 
+    :param img:
+    :param h_c: predict on hue channel
+    :param s_c: predict on saturation channel
+    :param v_c: predict on value channel
     :return: normalized feature vector
     """
     histograms = fx.get_histograms_hsv(img)
-    ft_desc = fd.FeatureDescriptor(histograms)
+    ft_desc = fd.FeatureDescriptor(histograms, h_c, s_c, v_c)
     ft_vec = ft_desc.get_vector()
     ft_vec_np = pre.get_array(ft_vec)
     max_val = fx.get_img_numpx(img)

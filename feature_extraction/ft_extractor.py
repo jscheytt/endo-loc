@@ -18,17 +18,25 @@ FPS_TAG = "fps"
 NUMPX_TAG = "numpx"
 
 
-def get_histograms_hsv(image):
+def get_histograms_hsv(image, h=True, s=True, v=True):
     """
     Retrieve HSV histogram of an image.
     :param image: OpenCV image obj
-    :return: List of histograms in order H, S, V
+    :param h: extract the hue channel
+    :param s: extract the saturation channel
+    :param v: extract the value channel
+    :return: List of histograms in order H, S, V (always if present)
     """
     image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    hist_h = hlp.flatten_int(cv2.calcHist([image_hsv], [0], None, [180], [0, 180]))
-    hist_s = hlp.flatten_int(cv2.calcHist([image_hsv], [1], None, [256], [0, 256]))
-    hist_v = hlp.flatten_int(cv2.calcHist([image_hsv], [2], None, [256], [0, 256]))
-    return [hist_h, hist_s, hist_v]
+    hist_h = hist_s = hist_v = None
+    if h:
+        hist_h = hlp.flatten_int(cv2.calcHist([image_hsv], [0], None, [180], [0, 180]))
+    if s:
+        hist_s = hlp.flatten_int(cv2.calcHist([image_hsv], [1], None, [256], [0, 256]))
+    if v:
+        hist_v = hlp.flatten_int(cv2.calcHist([image_hsv], [2], None, [256], [0, 256]))
+    full_hsv = [hist_h, hist_s, hist_v]
+    return [x for x in full_hsv if x is not None]
 
 
 def get_descriptor_as_xml(descriptor):
@@ -58,10 +66,13 @@ def get_vframe_as_xml(frame):
     return frame_el
 
 
-def get_xml_from_videofile(filename):
+def get_xml_from_videofile(filename, h=True, s=True, v=True):
     """
     Read in a video file and build an XML element from it.
     :param filename: Path to video file
+    :param h: predict on hue channel
+    :param s: predict on saturation channel
+    :param v: predict on value channel
     :return: XML element of the video file
     """
     cap = cv2.VideoCapture(filename)
@@ -84,7 +95,7 @@ def get_xml_from_videofile(filename):
                 numpx = get_img_numpx(frame_img)
 
             curr_timestamp = lt.Timestamp.from_frameidx_fps(curr_frameidx, fps)
-            vframe = fd.VFrame(curr_timestamp, fd.FeatureDescriptor(frame_img))
+            vframe = fd.VFrame(curr_timestamp, fd.FeatureDescriptor(frame_img, h, s, v))
             # video.add_frame(vframe)
 
             vframe_el = get_vframe_as_xml(vframe)
