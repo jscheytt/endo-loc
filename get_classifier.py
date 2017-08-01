@@ -27,6 +27,7 @@ def main(dir_train, dir_eval, clf_filepath, C_value, gamma_value):
     X, y = pre.get_multiple_data_and_targets(dir_filepath=dir_train, do_subsampling=True)
     if do_grid_search:
         best_parameters = s.get_best_params(X, y)
+        hlp.log(best_parameters)
     else:
         best_parameters = {'C': C, 'gamma': gamma}
     classifier = s.get_svclassifier(X, y, **best_parameters)
