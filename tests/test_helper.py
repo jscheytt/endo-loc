@@ -12,3 +12,7 @@ def test_strip_file_extension():
 
 def test_file_length():
     assert hlp.file_length(cft.test_img)
+
+
+def test_setup_logging():
+    hlp.setup_logging()

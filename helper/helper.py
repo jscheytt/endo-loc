@@ -85,8 +85,11 @@ def reverse_enum(l):
 
 
 def setup_logging():
-    os.makedirs("logs/", exist_ok=True)  # Create logging directory
-    logging.config.dictConfig(yaml.load(open('logging.conf', 'r')))
+    cwd = os.path.dirname(os.path.realpath(__file__))
+    root = os.path.join(cwd, "..")
+    full_path = lambda x: os.path.join(root, x)
+    os.makedirs(full_path("logs"), exist_ok=True)  # Create logging directory
+    logging.config.dictConfig(yaml.load(open(full_path("logging.conf"), 'r')))
 
 
 def log(message):
