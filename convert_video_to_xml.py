@@ -28,8 +28,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Convert a video file to an XML containing the HSV histograms of "
                                                  "each frame.")
     parser.add_argument("videofile", help="The video file to convert")
-    parser.add_argument("-noh", "--no_h_channel", help="Exclude the H channel", action="store_true")
-    parser.add_argument("-nos", "--no_s_channel", help="Exclude the S channel", action="store_true")
-    parser.add_argument("-nov", "--no_v_channel", help="Exclude the V channel", action="store_true")
+    parser.add_argument("-c", "--no_h_channel", help="Exclude the H channel", action="store_true")
+    parser.add_argument("-s", "--no_s_channel", help="Exclude the S channel", action="store_true")
+    parser.add_argument("-v", "--no_v_channel", help="Exclude the V channel", action="store_true")
     args = parser.parse_args()
     main(args.videofile, args.no_h_channel, args.no_s_channel, args.no_v_channel)
