@@ -33,7 +33,7 @@ def test_plot_histogram_hsv(test_image):
 
 @pytest.mark.skip(reason="GUI")
 def test_display_video_histogram_hsv():
-    dbg.plot_histograms_live(cft.example_vid)
+    dbg.plot_histograms_live(cft.exp_video)
     # TODO Fail if not displayed
 
 

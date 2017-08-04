@@ -73,26 +73,26 @@ def test_get_video_as_xml(test_hists):
     s = hsv[1]
     v = hsv[2]
 
-    vd_h = fx.get_xml_from_videofile(cft.example_vid, s=False, v=False)
+    vd_h = fx.get_xml_from_videofile(cft.exp_video, s=False, v=False)
     assert len(vd_h[0][0]) == 1
     assert len(vd_h[0][0][0].text.split(";")) == len(h)
-    vd_hs = fx.get_xml_from_videofile(cft.example_vid, v=False)
+    vd_hs = fx.get_xml_from_videofile(cft.exp_video, v=False)
     assert len(vd_hs[0][0]) == 2
     assert len(vd_hs[0][0][0].text.split(";")) == len(h)
     assert len(vd_hs[0][0][1].text.split(";")) == len(s)
-    vd_hsv = fx.get_xml_from_videofile(cft.example_vid)
+    vd_hsv = fx.get_xml_from_videofile(cft.exp_video)
     assert len(vd_hsv[0][0]) == 3
     assert len(vd_hsv[0][0][0].text.split(";")) == len(h)
     assert len(vd_hsv[0][0][1].text.split(";")) == len(s)
     assert len(vd_hsv[0][0][2].text.split(";")) == len(v)
-    vd_s = fx.get_xml_from_videofile(cft.example_vid, h=False, v=False)
+    vd_s = fx.get_xml_from_videofile(cft.exp_video, h=False, v=False)
     assert len(vd_s[0][0]) == 1
     assert len(vd_s[0][0][0].text.split(";")) == len(s)
-    vd_sv = fx.get_xml_from_videofile(cft.example_vid, h=False)
+    vd_sv = fx.get_xml_from_videofile(cft.exp_video, h=False)
     assert len(vd_sv[0][0]) == 2
     assert len(vd_sv[0][0][0].text.split(";")) == len(s)
     assert len(vd_sv[0][0][1].text.split(";")) == len(v)
-    vd_v = fx.get_xml_from_videofile(cft.example_vid, h=False, s=False)
+    vd_v = fx.get_xml_from_videofile(cft.exp_video, h=False, s=False)
     assert len(vd_v[0][0]) == 1
     assert len(vd_v[0][0][0].text.split(";")) == len(v)
 
@@ -101,12 +101,12 @@ def test_get_video_as_xml(test_hists):
 
 
 def test_write_video_xml(test_get_video_as_xml):
-    fx.write_video_to_xml(test_get_video_as_xml, cft.test_video_xml_filename)
-    assert hlp.file_length(cft.test_video_xml_filename)
+    fx.write_video_to_xml(test_get_video_as_xml, cft.exp_video_ft)
+    assert hlp.file_length(cft.exp_video_ft)
 
 
 def test_read_video_frames():
-    video = fx.get_video_from_xml(cft.test_video_xml_filename)
+    video = fx.get_video_from_xml(cft.exp_video_ft)
     assert len(video.frames)
 
 
