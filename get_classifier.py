@@ -22,9 +22,10 @@ def main(dir_train, dir_eval, clf_filepath, C_value, gamma_value):
     classifier = s.get_svclassifier(X, y, **best_parameters)
     s.write_classifier(classifier, clf_filepath)
 
-    X_eval, y_eval = pre.get_multiple_data_and_targets(dir_filepath=dir_eval)
-    validation, conf_mat = s.get_evaluation_report(classifier, X_eval, y_eval)
-    hlp.log(validation)
+    if dir_eval is not None:
+        X_eval, y_eval = pre.get_multiple_data_and_targets(dir_filepath=dir_eval)
+        validation, conf_mat = s.get_evaluation_report(classifier, X_eval, y_eval)
+        hlp.log(validation)
 
 
 if __name__ == "__main__":
@@ -33,10 +34,11 @@ if __name__ == "__main__":
     parser.add_argument("dir_train", help="Directory containing all feature XMLs and label CSVs for training the "
                                           "classifier. CSVs need to have the same file name as their corresponding "
                                           "XML.")
-    parser.add_argument("dir_eval", help="Directory containing the feature XML(s) and label CSV(s) for evaluating "
-                                         "the classifier's performance. CSV(s) must have the same file name as their "
-                                         "corresponding XML.")
     parser.add_argument("clf_filepath", help="Filepath where the final classifier should be exported to.")
+    parser.add_argument("-de", "--dir_eval",
+                        help="Directory containing the feature XML(s) and label CSV(s) for evaluating the "
+                             "classifier's performance. CSV(s) must have the same file name as their corresponding "
+                             "XML.")
     parser.add_argument("--C_value", "-c", type=float,
                         help="Omit the grid search and directly specify a C value.")
     parser.add_argument("--gamma", "-g", type=float,
