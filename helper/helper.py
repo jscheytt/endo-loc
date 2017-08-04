@@ -34,8 +34,12 @@ def file_length(filename):
     :param filename: Path to file
     :return: Byte length of file
     """
-    f = open(filename)
-    return int(os.fstat(f.fileno()).st_size)
+    try:
+        f = open(filename)
+        ret = int(os.fstat(f.fileno()).st_size)
+    except FileNotFoundError:
+        ret = -1
+    return ret
 
 
 def get_full_path_from_projroot(filename):
@@ -151,3 +155,15 @@ def imgs_different(img1, img2):
     :return: True if different, False if identical
     """
     return compare_imgs_by_hist(img1, img2) != 1.0
+
+
+def get_binary_bool_permutations(n):
+    """
+    Get the full boolean permutations of n steps.
+    :param n: number of variables
+    :return:
+    """
+    permutations = []
+    for i in range(2 ** n):
+        permutations.append([x == '1' for x in format(i, '0' + str(n) + 'b')])
+    return permutations
