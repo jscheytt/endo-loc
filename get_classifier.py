@@ -8,18 +8,7 @@ import prep.preprocessor as pre
 def main(dir_train, dir_eval, clf_filepath, C_value, gamma_value):
     hlp.setup_logging()
 
-    global C, gamma
-    if C_value is not (None or ""):
-        try:
-            C = float(C_value)
-        except ValueError:
-            pass
-    if gamma_value is not (None or ""):
-        try:
-            gamma = float(gamma_value)
-        except ValueError:
-            pass
-    if C_value is not (None or "") and gamma_value is not (None or ""):
+    if C_value is not None and gamma_value is not None:
         do_grid_search = False
     else:
         do_grid_search = True
@@ -29,7 +18,7 @@ def main(dir_train, dir_eval, clf_filepath, C_value, gamma_value):
         best_parameters = s.get_best_params(X, y)
         hlp.log(best_parameters)
     else:
-        best_parameters = {'C': C, 'gamma': gamma}
+        best_parameters = {'C': C_value, 'gamma': gamma_value}
     classifier = s.get_svclassifier(X, y, **best_parameters)
     s.write_classifier(classifier, clf_filepath)
 
@@ -48,7 +37,9 @@ if __name__ == "__main__":
                                          "the classifier's performance. CSV(s) must have the same file name as their "
                                          "corresponding XML.")
     parser.add_argument("clf_filepath", help="Filepath where the final classifier should be exported to.")
-    parser.add_argument("--C_value", "-c", help="Omit the grid search and directly specify a C value.")
-    parser.add_argument("--gamma", "-g", help="Omit the grid search and directly specify a gamma value.")
+    parser.add_argument("--C_value", "-c", type=float,
+                        help="Omit the grid search and directly specify a C value.")
+    parser.add_argument("--gamma", "-g", type=float,
+                        help="Omit the grid search and directly specify a gamma value.")
     args = parser.parse_args()
     main(args.dir_train, args.dir_eval, args.clf_filepath, C_value=args.C_value, gamma_value=args.gamma)
