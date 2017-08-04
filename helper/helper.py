@@ -38,6 +38,17 @@ def file_length(filename):
     return int(os.fstat(f.fileno()).st_size)
 
 
+def get_full_path_from_projroot(filename):
+    """
+    Retrieve the full path to filename. Assumes this function is called from inside a module.
+    :param filename:
+    :return: full filepath to filename
+    """
+    cwd = os.path.dirname(os.path.realpath(__file__))
+    root = os.path.join(cwd, "..")
+    return os.path.join(root, filename)
+
+
 def xml_elements_equal(e1, e2):
     """
     Compare 2 XML elements by content.
@@ -85,11 +96,12 @@ def reverse_enum(l):
 
 
 def setup_logging():
-    cwd = os.path.dirname(os.path.realpath(__file__))
-    root = os.path.join(cwd, "..")
-    full_path = lambda x: os.path.join(root, x)
-    os.makedirs(full_path("logs"), exist_ok=True)  # Create logging directory
-    logging.config.dictConfig(yaml.load(open(full_path("logging.conf"), 'r')))
+    """
+    Set up logging with the logging.conf file in the project root.
+    :return:
+    """
+    os.makedirs(get_full_path_from_projroot("logs"), exist_ok=True)  # Create logging directory
+    logging.config.dictConfig(yaml.load(open(get_full_path_from_projroot("logging.conf"), 'r')))
 
 
 def log(message):

@@ -86,7 +86,6 @@ def test_get_crossval_evaluation(test_data_and_targets):
     assert len(y_pred)
 
 
-# @pytest.mark.skip(reason="Hard-coded filepaths in fixture")
 def test_crossval_predict_files_folds(test_get_multiple_data_and_targets):
     X_list, y_list = test_get_multiple_data_and_targets
     n_files = len(X_list)

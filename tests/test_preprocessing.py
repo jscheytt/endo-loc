@@ -88,7 +88,6 @@ def test_get_combined_data_and_targets(test_data_and_targets, eval_data_and_targ
     assert len(X) == len(y)
 
 
-@pytest.mark.skip(reason="Hard-coded filepaths")
 def test_get_multiple_data_and_targets_concat():
     X_comb, y_comb = pre.get_multiple_data_and_targets(cft.data_targets_directory, do_subsampling=True)
     assert len(X_comb)

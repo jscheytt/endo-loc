@@ -4,6 +4,7 @@ import pytest
 
 import feature_extraction.ft_extractor as fx
 import prep.preprocessor as pre
+import helper.helper as hlp
 
 res_dir = "tests" + os.sep + "res" + os.sep
 
@@ -13,8 +14,7 @@ example_vid = res_dir + "test_video_1s.mp4"  # alt: "test_video_1s.mp4", "test_v
 test_video_xml_filename = res_dir + "test_video_features.xml"
 test_ilabel = res_dir + "test_ilabel.ass"
 test_label_list = res_dir + "test_label_list.csv"
-data_targets_directory = 'C:\\Users\\Josia\\Documents\\Dropbox\\Studium\\HuC\\CaMed ' \
-                         'Masterprojekt\\endo-loc\\tests\\res\\data_targets_test'
+data_targets_directory = hlp.get_full_path_from_projroot(os.path.join("tests", "res", "data_targets_test"))
 
 training_video = res_dir + "video_train.mp4"
 training_video_ft = res_dir + "video_train_ft.xml"
@@ -68,7 +68,6 @@ def eval_data_and_targets():
     return X, y
 
 
-# @pytest.mark.skip(reason="Hard-coded filepaths")
 @pytest.fixture(scope='module')
 def test_get_multiple_data_and_targets():
     X_list, y_list = pre.get_multiple_data_and_targets(data_targets_directory, do_subsampling=True, do_concat=False)
