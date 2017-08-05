@@ -88,7 +88,7 @@ def write_list_to_dir(directory, y, filename):
     :param filename:
     :return:
     """
-    textfile = directory + os.sep + filename
+    textfile = os.path.join(directory, filename)
     write_list_to_file(y, textfile)
 
 

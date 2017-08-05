@@ -21,7 +21,8 @@ def main(dir_train_or_clf, dir_eval, do_subsampling, write_labels):
     evaluation, conf_mat = s.get_evaluation_report(svc, X_eval, y_eval, predicted=y_pred)
 
     if write_labels:
-        dbg.write_list_to_dir(dir_eval, y_eval, y_pred)
+        dbg.write_list_to_dir(dir_eval, y_pred, "y_pred.txt")
+        dbg.write_list_to_dir(dir_eval, y_eval, "y_true.txt")
 
     hlp.log(evaluation)
     if conf_mat is not None:
